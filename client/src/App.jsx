@@ -25,13 +25,15 @@ import {
   Eye,
   UserCheck,
   RefreshCw,
+  Download,
 } from "lucide-react";
 
 export default function App() {
   const [view, setView] = useState("form");
   const [loading, setLoading] = useState(false);
+  const [genLoading, setGenLoading] = useState(false); // New state for doc generation
 
-  // API Base URL (Change this if you deploy remotely)
+  // API Base URL
   const API_URL = "http://localhost:5000/api";
 
   // --- STATE ---
@@ -92,7 +94,6 @@ export default function App() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // In a real local setup, ensure server.js is running on port 5000
       const response = await fetch(`${API_URL}/dashboard-data`);
       if (!response.ok) throw new Error("Failed to connect to backend");
       const data = await response.json();
@@ -102,8 +103,7 @@ export default function App() {
       setSavedTenders(data.tenders || []);
     } catch (error) {
       console.error("API Error:", error);
-      // Fallback/Mock data if server is offline (so you can still see UI in preview)
-      console.warn("Using fallback/local data because backend is unreachable.");
+      console.warn("Backend unreachable.");
     } finally {
       setLoading(false);
     }
@@ -185,16 +185,55 @@ export default function App() {
     setView("tender-details");
   };
 
-  // --- HANDLERS: Category CRUD ---
+  // --- HANDLER: Document Generation ---
+  const handleGenerateDocument = async () => {
+    if (!activeTender) {
+      alert("No tender selected");
+      return;
+    }
+    setGenLoading(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/generate-document/${activeTender.id}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Generation failed");
+      }
+
+      // Convert response to Blob (binary file)
+      const blob = await response.blob();
+
+      // Create a temporary link to download the file
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${activeTender.tenderNo || "tender"}_Draft.docx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error("Download Error:", error);
+      alert(`Failed to generate document. Error: ${error.message}`);
+    } finally {
+      setGenLoading(false);
+    }
+  };
+
+  // --- HANDLERS: CRUD (Same as before) ---
   const handleCategoryChange = (e) =>
     setCategoryForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const saveCategory = async (e) => {
     e.preventDefault();
     if (!categoryForm.name) return;
-
     try {
-      // Simplification: Only supporting CREATE for now in this snippet to keep file short
       const response = await fetch(`${API_URL}/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -221,7 +260,6 @@ export default function App() {
     }
   };
 
-  // --- HANDLERS: Terms CRUD ---
   const handleTermChange = (e) =>
     setTermForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -256,7 +294,6 @@ export default function App() {
     }
   };
 
-  // Helpers (Logic same as before)
   const requestDelete = (id) => setDeleteConfirmId(id);
   const cancelDelete = () => setDeleteConfirmId(null);
   const editItem = (item, type) => {
@@ -293,7 +330,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* --- NAVIGATION HEADER --- */}
       <nav className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 py-3 shadow-sm">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div className="flex items-center gap-2">
@@ -355,9 +391,7 @@ export default function App() {
         </div>
       </nav>
 
-      {/* --- MAIN CONTENT --- */}
       <div className="max-w-6xl mx-auto py-8 px-4">
-        {/* VIEW 1: DATA COLLECTION FORM */}
         {view === "form" && (
           <div className="animate-in fade-in slide-in-from-left-4 duration-300">
             <div className="flex justify-between items-end mb-6">
@@ -374,7 +408,6 @@ export default function App() {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
               <div className="p-6 md:p-8">
                 <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Section 0: Department Info */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <Building className="w-5 h-5 text-blue-500" /> Department
@@ -433,7 +466,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Section 1: Classification */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <Layers className="w-5 h-5 text-blue-500" />{" "}
@@ -473,7 +505,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Section 2: General */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <Hash className="w-5 h-5 text-blue-500" /> General Details
@@ -551,7 +582,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Section 3: Financials */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <DollarSign className="w-5 h-5 text-blue-500" />{" "}
@@ -600,7 +630,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Section 4: Dates */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <Calendar className="w-5 h-5 text-blue-500" /> Dates
@@ -635,7 +664,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* --- SECTION: Map Terms & Conditions --- */}
                   <div className="space-y-4 pt-6 border-t border-slate-100">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-800 border-b pb-2">
                       <CheckSquare className="w-5 h-5 text-blue-500" />
@@ -647,7 +675,6 @@ export default function App() {
                     </p>
 
                     <div className="flex flex-col md:flex-row border border-slate-300 rounded-lg overflow-hidden h-[500px]">
-                      {/* Left Sidebar: Categories */}
                       <div className="w-full md:w-1/3 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-300 overflow-y-auto">
                         {categories.map((cat) => (
                           <button
@@ -676,7 +703,6 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* Right Panel: Terms List */}
                       <div className="w-full md:w-2/3 bg-white p-4 overflow-y-auto">
                         {!activeCategoryFilter ? (
                           <div className="h-full flex flex-col items-center justify-center text-slate-400">
@@ -741,7 +767,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Summary Footer */}
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                       <div className="mb-3">
                         <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">
@@ -795,7 +820,6 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 4: MY TENDERS */}
         {view === "my-tenders" && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="flex justify-between items-end mb-6">
@@ -880,7 +904,6 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 5: TENDER DETAILS */}
         {view === "tender-details" && activeTender && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="flex items-center gap-4 mb-6">
@@ -901,9 +924,7 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Main Details */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Organization Block */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
                     <Building className="w-4 h-4 text-blue-500" /> Organization
@@ -931,7 +952,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Tender Information Block */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-500" /> Tender
@@ -983,7 +1003,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Financial Requirements Block */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
                     <DollarSign className="w-4 h-4 text-blue-500" /> Financial
@@ -1011,7 +1030,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Critical Dates Block */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-blue-500" /> Critical
@@ -1068,7 +1086,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Mapped Terms Block */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 border-b pb-2">
                     Mapped Terms & Conditions
@@ -1102,15 +1119,30 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Sidebar Actions */}
               <div className="space-y-4">
                 <div className="bg-blue-50 rounded-xl border border-blue-100 p-6">
                   <h3 className="font-bold text-blue-900 mb-2">Next Step</h3>
                   <p className="text-sm text-blue-700 mb-4">
                     Generate the final legal document using the template logic.
                   </p>
-                  <button className="w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors shadow-sm">
-                    Generate Document
+                  {/* GENERATE DOCUMENT BUTTON */}
+                  <button
+                    onClick={handleGenerateDocument}
+                    disabled={genLoading}
+                    className={`w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 ${
+                      genLoading ? "opacity-75 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {genLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />{" "}
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" /> Generate Document
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -1118,7 +1150,6 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 2 & 3: CATEGORIES & MASTER (Keep same, using fetchData on mount automatically populates them) */}
         {view === "categories" && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="flex items-center gap-4 mb-6">
