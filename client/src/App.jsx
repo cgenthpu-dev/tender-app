@@ -27,8 +27,10 @@ import {
   RefreshCw,
   Download,
 } from "lucide-react";
+import { Routes, Route } from "react-router-dom";
+import TenderPreview from "./pages/TenderPreview";
 
-export default function App() {
+function Dashboard() {
   const [view, setView] = useState("form");
   const [loading, setLoading] = useState(false);
   const [genLoading, setGenLoading] = useState(false); // New state for doc generation
@@ -42,7 +44,13 @@ export default function App() {
   const [categories, setCategories] = useState([]);
   const [terms, setTerms] = useState([]);
 
-  // --- FORM STATES ---
+  // Saved Docs State
+  const [savedDocs, setSavedDocs] = useState([]);
+  const [savedDocsLoading, setSavedDocsLoading] = useState(false);
+
+  // ... (rest of form states)
+
+
   const [formData, setFormData] = useState({
     id: null,
     tenderCategory: "service",
@@ -180,9 +188,23 @@ export default function App() {
     }
   };
 
-  const viewTenderDetails = (tender) => {
+  const viewTenderDetails = async (tender) => {
     setActiveTender(tender);
     setView("tender-details");
+
+    // Fetch saved documents for this tender
+    setSavedDocsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/tenders/${tender.id}/documents`);
+      if (response.ok) {
+        const docs = await response.json();
+        setSavedDocs(docs);
+      }
+    } catch (err) {
+      console.error("Failed to fetch saved docs", err);
+    } finally {
+      setSavedDocsLoading(false);
+    }
   };
 
   // --- HANDLER: Document Generation ---
@@ -191,39 +213,8 @@ export default function App() {
       alert("No tender selected");
       return;
     }
-    setGenLoading(true);
-
-    try {
-      const response = await fetch(
-        `${API_URL}/generate-document/${activeTender.id}`,
-        {
-          method: "POST",
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Generation failed");
-      }
-
-      // Convert response to Blob (binary file)
-      const blob = await response.blob();
-
-      // Create a temporary link to download the file
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${activeTender.tenderNo || "tender"}_Draft.docx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    } catch (error) {
-      console.error("Download Error:", error);
-      alert(`Failed to generate document. Error: ${error.message}`);
-    } finally {
-      setGenLoading(false);
-    }
+    // Open the preview in a new tab
+    window.open(`/tender-preview/${activeTender.id}`, "_blank");
   };
 
   // --- HANDLERS: CRUD (Same as before) ---
@@ -349,41 +340,37 @@ export default function App() {
           <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
             <button
               onClick={() => setView("form")}
-              className={`whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === "form"
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
+              className={`whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === "form"
+                ? "bg-blue-50 text-blue-700"
+                : "text-slate-600 hover:bg-slate-50"
+                }`}
             >
               Data Form
             </button>
             <button
               onClick={() => setView("my-tenders")}
-              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === "my-tenders" || view === "tender-details"
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
+              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === "my-tenders" || view === "tender-details"
+                ? "bg-blue-50 text-blue-700"
+                : "text-slate-600 hover:bg-slate-50"
+                }`}
             >
               <List className="w-4 h-4" /> My Tenders
             </button>
             <button
               onClick={() => setView("categories")}
-              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === "categories"
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
+              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === "categories"
+                ? "bg-blue-50 text-blue-700"
+                : "text-slate-600 hover:bg-slate-50"
+                }`}
             >
               <Folder className="w-4 h-4" /> T&C Categories
             </button>
             <button
               onClick={() => setView("gem-master")}
-              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === "gem-master"
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
+              className={`whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === "gem-master"
+                ? "bg-blue-50 text-blue-700"
+                : "text-slate-600 hover:bg-slate-50"
+                }`}
             >
               <Database className="w-4 h-4" /> GeM Master
             </button>
@@ -681,11 +668,10 @@ export default function App() {
                             key={cat.id}
                             type="button"
                             onClick={() => setActiveCategoryFilter(cat.id)}
-                            className={`w-full text-left px-4 py-3 text-sm font-medium border-b border-slate-100 transition-colors flex justify-between items-center ${
-                              activeCategoryFilter === cat.id
-                                ? "bg-white text-blue-600 border-l-4 border-l-blue-600"
-                                : "text-slate-600 hover:bg-slate-100"
-                            }`}
+                            className={`w-full text-left px-4 py-3 text-sm font-medium border-b border-slate-100 transition-colors flex justify-between items-center ${activeCategoryFilter === cat.id
+                              ? "bg-white text-blue-600 border-l-4 border-l-blue-600"
+                              : "text-slate-600 hover:bg-slate-100"
+                              }`}
                           >
                             {cat.name}
                             <span className="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
@@ -729,29 +715,27 @@ export default function App() {
                                     onClick={() => toggleTermSelection(term.id)}
                                   >
                                     <div
-                                      className={`mt-0.5 w-5 h-5 flex items-center justify-center rounded border transition-colors ${
-                                        formData.selectedTermIds.includes(
-                                          term.id
-                                        )
-                                          ? "bg-blue-600 border-blue-600"
-                                          : "bg-white border-slate-300"
-                                      }`}
+                                      className={`mt-0.5 w-5 h-5 flex items-center justify-center rounded border transition-colors ${formData.selectedTermIds.includes(
+                                        term.id
+                                      )
+                                        ? "bg-blue-600 border-blue-600"
+                                        : "bg-white border-slate-300"
+                                        }`}
                                     >
                                       {formData.selectedTermIds.includes(
                                         term.id
                                       ) && (
-                                        <CheckSquare className="w-3.5 h-3.5 text-white" />
-                                      )}
+                                          <CheckSquare className="w-3.5 h-3.5 text-white" />
+                                        )}
                                     </div>
                                     <div className="flex-1">
                                       <h4
-                                        className={`text-sm font-bold ${
-                                          formData.selectedTermIds.includes(
-                                            term.id
-                                          )
-                                            ? "text-blue-800"
-                                            : "text-slate-700"
-                                        }`}
+                                        className={`text-sm font-bold ${formData.selectedTermIds.includes(
+                                          term.id
+                                        )
+                                          ? "text-blue-800"
+                                          : "text-slate-700"
+                                          }`}
                                       >
                                         {term.title}
                                       </h4>
@@ -1079,8 +1063,8 @@ export default function App() {
                       </span>
                       {activeTender.isPreBidRequired === "yes"
                         ? `Required on ${formatDateDisplay(
-                            activeTender.preBidDate
-                          )}`
+                          activeTender.preBidDate
+                        )}`
                         : "Not Required"}
                     </div>
                   </div>
@@ -1091,7 +1075,7 @@ export default function App() {
                     Mapped Terms & Conditions
                   </h3>
                   {activeTender.selectedTermIds &&
-                  activeTender.selectedTermIds.length > 0 ? (
+                    activeTender.selectedTermIds.length > 0 ? (
                     <div className="space-y-4">
                       {activeTender.selectedTermIds.map((id) => {
                         const term = terms.find((t) => t.id === id);
@@ -1129,9 +1113,8 @@ export default function App() {
                   <button
                     onClick={handleGenerateDocument}
                     disabled={genLoading}
-                    className={`w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 ${
-                      genLoading ? "opacity-75 cursor-not-allowed" : ""
-                    }`}
+                    className={`w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 ${genLoading ? "opacity-75 cursor-not-allowed" : ""
+                      }`}
                   >
                     {genLoading ? (
                       <>
@@ -1144,6 +1127,46 @@ export default function App() {
                       </>
                     )}
                   </button>
+                </div>
+
+                {/* SAVED DOCUMENTS LIST */}
+                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                    <Save className="w-4 h-4 text-blue-500" /> Saved Versions
+                  </h3>
+
+                  {savedDocsLoading ? (
+                    <div className="text-center py-4 text-slate-500 text-sm">Loading saved versions...</div>
+                  ) : savedDocs.length === 0 ? (
+                    <div className="text-center py-8 bg-slate-50 rounded border border-dashed border-slate-300">
+                      <p className="text-sm text-slate-500">No saved versions yet.</p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Open the preview and click "Save" to create a version.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {savedDocs.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between p-3 bg-slate-50 rounded border border-slate-200 hover:border-blue-300 transition-colors group"
+                        >
+                          <div>
+                            <h4 className="font-bold text-slate-800 text-sm">{doc.name}</h4>
+                            <p className="text-xs text-slate-500">
+                              {new Date(doc.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => window.open(`/tender-preview/${activeTender.id}?savedId=${doc.id}`, "_blank")}
+                            className="text-xs bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors flex items-center gap-1"
+                          >
+                            <Eye className="w-3 h-3" /> View
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1316,5 +1339,14 @@ export default function App() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/tender-preview/:id" element={<TenderPreview />} />
+    </Routes>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Printer } from "lucide-react";
 
 // Reusable Layout Component for the Triple Border & Pagination
@@ -23,8 +23,9 @@ const PageLayout = ({ children, pageNumber, totalPages }) => (
   </div>
 );
 
-const TenderDocument = () => {
-  const [data] = useState({
+const TenderDocument = ({ data }) => {
+  // Default data structure if not provided (for preview/fallback)
+  const tenderData = data || {
     name_of_department: "{{name_of_department}}",
     email_of_department: "{{email_of_department}}",
     procurement_title: "{{procurement_title}}",
@@ -34,17 +35,20 @@ const TenderDocument = () => {
     pbg_value: "{{get value from the form}}",
     emd_officer: "{{EMD_officer}}",
     bid_validity: "{{bid_validity}}",
-  });
+  };
 
   const totalPages = 3;
 
   const handlePrint = () => {
-    window.print();
+    if (typeof window !== "undefined") {
+      window.print();
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center gap-8 font-serif print:bg-white print:p-0 print:gap-0">
-      <style>{`
+      {typeof window !== "undefined" && (
+        <style>{`
         /* Importing Montserrat */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
@@ -149,6 +153,7 @@ const TenderDocument = () => {
           }
         }
       `}</style>
+      )}
 
       {/* Toolbar */}
       <div className="no-print flex gap-4">
@@ -172,7 +177,7 @@ const TenderDocument = () => {
               <h3 className="text-lg font-bold">
                 (NAAC Accredited ‘A’ Grade University)
               </h3>
-              <h3 className="text-lg font-bold">“{data.name_of_department}”</h3>
+              <h3 className="text-lg font-bold">“{tenderData.name_of_department}”</h3>
 
               <div className="my-12 flex justify-center">
                 <img
@@ -186,13 +191,13 @@ const TenderDocument = () => {
                 Bid Document for
                 <br />
                 <span className="text-xl font-normal block mt-2">
-                  {data.procurement_title}
+                  {tenderData.procurement_title}
                 </span>
                 <br />
                 for
                 <br />
                 <span className="text-xl font-normal block mt-2">
-                  {data.name_of_department}
+                  {tenderData.name_of_department}
                 </span>
               </h1>
 
@@ -207,7 +212,7 @@ const TenderDocument = () => {
                   </a>
                 </p>
                 <p>
-                  <strong>E-mail:</strong> {data.email_of_department}
+                  <strong>E-mail:</strong> {tenderData.email_of_department}
                 </p>
               </div>
             </div>
@@ -236,17 +241,17 @@ const TenderDocument = () => {
                 <tr>
                   <td>1.</td>
                   <td>Item Description</td>
-                  <td>{data.tender_title}</td>
+                  <td>{tenderData.tender_title}</td>
                 </tr>
                 <tr>
                   <td>2.</td>
                   <td>Quantity</td>
-                  <td>{data.quantity}</td>
+                  <td>{tenderData.quantity}</td>
                 </tr>
                 <tr>
                   <td>3.</td>
                   <td>Department</td>
-                  <td>{data.name_of_department}</td>
+                  <td>{tenderData.name_of_department}</td>
                 </tr>
                 <tr>
                   <td>4.</td>
@@ -266,26 +271,26 @@ const TenderDocument = () => {
                 <tr>
                   <td>7.</td>
                   <td>Earnest Money Deposit (EMD)</td>
-                  <td>{data.emd_value}</td>
+                  <td>{tenderData.emd_value}</td>
                 </tr>
                 <tr>
                   <td>8.</td>
                   <td>Performance Security</td>
-                  <td>{data.pbg_value}</td>
+                  <td>{tenderData.pbg_value}</td>
                 </tr>
                 <tr>
                   <td>9.</td>
                   <td>Pledge of EMD / PBG</td>
                   <td>
                     EMD and Performance Bank Guarantee (PBG) must be pledged
-                    only in the name of: <strong>{data.emd_officer}</strong>
+                    only in the name of: <strong>{tenderData.emd_officer}</strong>
                   </td>
                 </tr>
                 <tr>
                   <td>10.</td>
                   <td>Bid Validity</td>
                   <td>
-                    {data.bid_validity} days from the date of publication of
+                    {tenderData.bid_validity} days from the date of publication of
                     bid.
                   </td>
                 </tr>
