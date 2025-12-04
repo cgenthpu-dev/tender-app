@@ -183,6 +183,17 @@ app.get("/api/documents/:id", async (req, res) => {
   }
 });
 
+// Delete a saved document
+app.delete("/api/documents/:id", async (req, res) => {
+  try {
+    const result = await SavedDocument.findOneAndDelete({ id: parseInt(req.params.id) });
+    if (!result) return res.status(404).json({ error: "Document not found" });
+    res.json({ message: "Document deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- GENERATE DOCX DOCUMENT (Using docxtemplater) ---
 app.post("/api/generate-document/:id", async (req, res) => {
   try {

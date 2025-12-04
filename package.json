@@ -16,6 +16,7 @@
     "libreoffice-convert": "^1.7.0",
     "lucide-react": "^0.555.0",
     "mongoose": "^9.0.0",
+    "nodemon": "^3.1.11",
     "pdf2pic": "^3.2.0",
     "pizzip": "^3.2.0",
     "puppeteer": "^24.31.0",

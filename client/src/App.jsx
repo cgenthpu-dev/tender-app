@@ -48,8 +48,9 @@ function Dashboard() {
   const [savedDocs, setSavedDocs] = useState([]);
   const [savedDocsLoading, setSavedDocsLoading] = useState(false);
 
-  // ... (rest of form states)
-
+  // Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const [formData, setFormData] = useState({
     id: null,
@@ -207,6 +208,29 @@ function Dashboard() {
     }
   };
 
+  const deleteSavedDoc = (docId) => {
+    setItemToDelete(docId);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/documents/${itemToDelete}`, { method: "DELETE" });
+      if (response.ok) {
+        setSavedDocs(prev => prev.filter(d => d.id !== itemToDelete));
+        setDeleteModalOpen(false);
+        setItemToDelete(null);
+      } else {
+        alert("Failed to delete document");
+      }
+    } catch (err) {
+      console.error("Error deleting document:", err);
+      alert("Error deleting document");
+    }
+  };
+
   // --- HANDLER: Document Generation ---
   const handleGenerateDocument = async () => {
     if (!activeTender) {
@@ -321,6 +345,38 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all scale-100">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">Delete Version?</h3>
+              <p className="text-slate-600 mb-6 text-sm">
+                Are you sure you want to delete this saved version? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="flex-1 px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <nav className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 py-3 shadow-sm">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div className="flex items-center gap-2">
@@ -711,37 +767,39 @@ function Dashboard() {
                                 .map((term) => (
                                   <div
                                     key={term.id}
-                                    className="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer"
-                                    onClick={() => toggleTermSelection(term.id)}
+                                    className={`p-3 rounded-lg border transition-all cursor-pointer ${formData.selectedTermIds.includes(
+                                      term.id
+                                    )
+                                      ? "bg-blue-50 border-blue-200 shadow-sm"
+                                      : "bg-white border-slate-200 hover:border-blue-200"
+                                      }`}
+                                    onClick={() =>
+                                      toggleTermSelection(term.id)
+                                    }
                                   >
-                                    <div
-                                      className={`mt-0.5 w-5 h-5 flex items-center justify-center rounded border transition-colors ${formData.selectedTermIds.includes(
-                                        term.id
-                                      )
-                                        ? "bg-blue-600 border-blue-600"
-                                        : "bg-white border-slate-300"
-                                        }`}
-                                    >
-                                      {formData.selectedTermIds.includes(
-                                        term.id
-                                      ) && (
-                                          <CheckSquare className="w-3.5 h-3.5 text-white" />
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                      <h4
-                                        className={`text-sm font-bold ${formData.selectedTermIds.includes(
+                                    <div className="flex items-start gap-3">
+                                      <div
+                                        className={`mt-1 w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.selectedTermIds.includes(
                                           term.id
                                         )
-                                          ? "text-blue-800"
-                                          : "text-slate-700"
+                                          ? "bg-blue-600 border-blue-600"
+                                          : "bg-white border-slate-300"
                                           }`}
                                       >
-                                        {term.title}
-                                      </h4>
-                                      <p className="text-xs text-slate-600 mt-1 whitespace-pre-wrap leading-relaxed">
-                                        {term.description}
-                                      </p>
+                                        {formData.selectedTermIds.includes(
+                                          term.id
+                                        ) && (
+                                            <CheckSquare className="w-3.5 h-3.5 text-white" />
+                                          )}
+                                      </div>
+                                      <div>
+                                        <h4 className="text-sm font-medium text-slate-800">
+                                          {term.title}
+                                        </h4>
+                                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                                          {term.description}
+                                        </p>
+                                      </div>
                                     </div>
                                   </div>
                                 ))
@@ -750,52 +808,20 @@ function Dashboard() {
                         )}
                       </div>
                     </div>
-
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                      <div className="mb-3">
-                        <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">
-                          Selection Breakdown
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {getSelectionSummary().length === 0 ? (
-                            <span className="text-xs text-slate-400 italic">
-                              No terms selected yet.
-                            </span>
-                          ) : (
-                            getSelectionSummary().map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center bg-white px-2 py-1 rounded border border-slate-200 shadow-sm text-xs"
-                              >
-                                <span className="font-medium text-slate-700 mr-2">
-                                  {item.name}:
-                                </span>
-                                <span className="font-bold text-blue-600">
-                                  {item.count}
-                                </span>
-                              </div>
-                            ))
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center border-t border-slate-200 pt-3">
-                        <span className="text-sm font-medium text-slate-700">
-                          Total Terms Selected:
-                        </span>
-                        <span className="font-bold text-lg text-blue-700 bg-blue-100 px-3 py-0.5 rounded-full border border-blue-200">
-                          {formData.selectedTermIds.length}
-                        </span>
-                      </div>
-                    </div>
                   </div>
 
-                  <div className="pt-6 border-t flex justify-end gap-3">
+                  <div className="flex justify-end pt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-sm flex items-center gap-2 transition-colors"
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-lg shadow-blue-200 transition-all transform hover:scale-105 flex items-center gap-2"
                     >
-                      <Save className="w-4 h-4" /> Save Form Data
+                      {loading ? (
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-5 h-5" />
+                      )}
+                      Save & Proceed
                     </button>
                   </div>
                 </form>
@@ -806,81 +832,65 @@ function Dashboard() {
 
         {view === "my-tenders" && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex justify-between items-end mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">
-                  My Tenders
-                </h1>
-                <p className="text-slate-500 text-sm mt-1">
-                  Manage and generate documents for saved entries.
-                </p>
-              </div>
-              <button
-                onClick={() => setView("form")}
-                className="flex items-center gap-2 text-sm text-white font-medium bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" /> Create New
-              </button>
-            </div>
-
+            <h1 className="text-2xl font-bold text-slate-900 mb-6">
+              My Tenders
+            </h1>
             {savedTenders.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl border border-dashed border-slate-300">
-                <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <h3 className="text-lg font-medium text-slate-700">
-                  No tenders saved yet
+              <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-slate-400" />
+                </div>
+                <h3 className="text-lg font-medium text-slate-900">
+                  No tenders yet
                 </h3>
-                <p className="text-slate-500 text-sm">
-                  Check your DB connection if you expected data here.
+                <p className="text-slate-500 mt-1 mb-6">
+                  Create your first tender document to get started.
                 </p>
+                <button
+                  onClick={() => setView("form")}
+                  className="text-blue-600 font-medium hover:underline"
+                >
+                  Create New Tender
+                </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {savedTenders.map((tender) => (
                   <div
                     key={tender.id}
-                    className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col h-full"
+                    className="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow p-6 group"
                   >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                        {tender.tenderType}
-                      </span>
-                      <span className="text-xs text-slate-400">
-                        {new Date(tender.createdAt).toLocaleDateString()}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="bg-blue-50 p-2 rounded-lg">
+                        <FileText className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600 rounded-full">
+                        #{tender.id}
                       </span>
                     </div>
-                    <h3 className="font-bold text-slate-800 text-lg mb-1 line-clamp-2">
-                      {tender.tenderName || "Untitled Tender"}
+                    <h3 className="font-semibold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {tender.tenderName}
                     </h3>
-                    <p className="text-sm text-slate-500 mb-4 font-mono">
-                      {tender.tenderNo}
-                    </p>
-
-                    <div className="mt-auto space-y-3 pt-4 border-t border-slate-100">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">TIA:</span>
-                        <span className="font-medium text-slate-900 truncate max-w-[150px]">
-                          {tender.tenderInvitingAuthority}
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center text-sm text-slate-500">
+                        <Building className="w-4 h-4 mr-2" />
+                        <span className="truncate">
+                          {tender.departmentName}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">Est. Cost:</span>
-                        <span className="font-medium text-slate-900">
-                          ₹{tender.estimatedCost}
+                      <div className="flex items-center text-sm text-slate-500">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        <span>
+                          {new Date(tender.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">Terms Mapped:</span>
-                        <span className="font-medium text-slate-900">
-                          {tender.selectedTermIds?.length || 0} Clauses
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => viewTenderDetails(tender)}
-                        className="w-full mt-2 py-2 bg-slate-50 text-slate-700 text-sm font-medium rounded border border-slate-200 hover:bg-white hover:border-blue-300 hover:text-blue-600 transition-colors flex justify-center items-center gap-2"
-                      >
-                        <Eye className="w-4 h-4" /> View Details
-                      </button>
                     </div>
+                    <button
+                      onClick={() => viewTenderDetails(tender)}
+                      className="w-full py-2 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      View Details <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -889,451 +899,388 @@ function Dashboard() {
         )}
 
         {view === "tender-details" && activeTender && (
-          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <button
-                onClick={() => setView("my-tenders")}
-                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
-              >
-                <ArrowLeft className="w-6 h-6 text-slate-600" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">
-                  {activeTender.tenderName}
-                </h1>
-                <p className="text-slate-500 text-sm font-mono">
-                  {activeTender.tenderNo}
-                </p>
-              </div>
-            </div>
+          <div className="animate-in fade-in zoom-in-95 duration-300">
+            <button
+              onClick={() => setView("my-tenders")}
+              className="mb-6 flex items-center text-slate-500 hover:text-slate-800 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back to List
+            </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <Building className="w-4 h-4 text-blue-500" /> Organization
-                    Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Department Name
-                      </span>{" "}
-                      {activeTender.departmentName}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Department Email
-                      </span>{" "}
-                      {activeTender.departmentEmail}
-                    </div>
-                    <div className="md:col-span-2">
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Tender Inviting Authority
-                      </span>{" "}
-                      {activeTender.tenderInvitingAuthority}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-blue-500" /> Tender
-                    Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                    <div className="md:col-span-2">
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Tender Title
-                      </span>{" "}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+              <div className="p-6 md:p-8 border-b border-slate-100">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900 mb-2">
                       {activeTender.tenderName}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Reference No
-                      </span>{" "}
-                      {activeTender.tenderNo}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Category / Type
-                      </span>{" "}
-                      <span className="capitalize">
-                        {activeTender.tenderCategory}
-                      </span>{" "}
-                      /{" "}
-                      <span className="uppercase">
-                        {activeTender.tenderType}
+                    </h1>
+                    <div className="flex gap-4 text-sm text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <Hash className="w-4 h-4" /> {activeTender.tenderNo}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" /> Created:{" "}
+                        {new Date(activeTender.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Item Quantity
-                      </span>{" "}
-                      {activeTender.itemQuantity}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Estimated Cost
-                      </span>{" "}
-                      ₹{activeTender.estimatedCost}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Bid Validity
-                      </span>{" "}
-                      {activeTender.bidValidity} Days
-                    </div>
                   </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-blue-500" /> Financial
-                    Requirements
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        EMD Required
-                      </span>{" "}
-                      {activeTender.emdRequired}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        PBG Required
-                      </span>{" "}
-                      {activeTender.pbgRequired}
-                    </div>
-                    <div className="md:col-span-2">
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Pledge Officer
-                      </span>{" "}
-                      {activeTender.emdPledgeOfficer}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-blue-500" /> Critical
-                    Dates
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Bid Start Date
-                      </span>{" "}
-                      {formatDateDisplay(activeTender.bidStartDate)}
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Bid End Date
-                      </span>{" "}
-                      {formatDateDisplay(activeTender.bidEndDate)}
-                    </div>
-                    {activeTender.publishDate && (
-                      <div>
-                        <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                          Publish Date
-                        </span>{" "}
-                        {formatDateDisplay(activeTender.publishDate)}
-                      </div>
-                    )}
-                    {activeTender.offlineSubmissionDate && (
-                      <div>
-                        <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                          Offline Submission
-                        </span>{" "}
-                        {formatDateDisplay(activeTender.offlineSubmissionDate)}
-                      </div>
-                    )}
-                    {activeTender.techEvalDate && (
-                      <div>
-                        <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                          Tech Bid Opening
-                        </span>{" "}
-                        {formatDateDisplay(activeTender.techEvalDate)}
-                      </div>
-                    )}
-
-                    <div className="md:col-span-2 border-t pt-2 mt-2">
-                      <span className="text-slate-500 block text-xs uppercase tracking-wider">
-                        Pre-Bid Meeting
-                      </span>
-                      {activeTender.isPreBidRequired === "yes"
-                        ? `Required on ${formatDateDisplay(
-                          activeTender.preBidDate
-                        )}`
-                        : "Not Required"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2">
-                    Mapped Terms & Conditions
-                  </h3>
-                  {activeTender.selectedTermIds &&
-                    activeTender.selectedTermIds.length > 0 ? (
-                    <div className="space-y-4">
-                      {activeTender.selectedTermIds.map((id) => {
-                        const term = terms.find((t) => t.id === id);
-                        if (!term) return null;
-                        return (
-                          <div
-                            key={id}
-                            className="p-3 bg-slate-50 rounded border border-slate-100"
-                          >
-                            <h4 className="font-bold text-slate-800 text-sm">
-                              {term.title}
-                            </h4>
-                            <p className="text-xs text-slate-600 mt-1 whitespace-pre-wrap">
-                              {term.description}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-400 italic">
-                      No additional terms mapped.
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-blue-50 rounded-xl border border-blue-100 p-6">
-                  <h3 className="font-bold text-blue-900 mb-2">Next Step</h3>
-                  <p className="text-sm text-blue-700 mb-4">
-                    Generate the final legal document using the template logic.
-                  </p>
-                  {/* GENERATE DOCUMENT BUTTON */}
                   <button
                     onClick={handleGenerateDocument}
-                    disabled={genLoading}
-                    className={`w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 ${genLoading ? "opacity-75 cursor-not-allowed" : ""
-                      }`}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-blue-200 transition-all flex items-center gap-2"
                   >
-                    {genLoading ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />{" "}
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Download className="w-4 h-4" /> Generate Document
-                      </>
-                    )}
+                    <FileText className="w-5 h-5" />
+                    Generate Document
                   </button>
                 </div>
+              </div>
 
-                {/* SAVED DOCUMENTS LIST */}
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <Save className="w-4 h-4 text-blue-500" /> Saved Versions
-                  </h3>
+              <div className="p-6 md:p-8 bg-slate-50/50">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">
+                  Saved Versions
+                </h3>
 
-                  {savedDocsLoading ? (
-                    <div className="text-center py-4 text-slate-500 text-sm">Loading saved versions...</div>
-                  ) : savedDocs.length === 0 ? (
-                    <div className="text-center py-8 bg-slate-50 rounded border border-dashed border-slate-300">
-                      <p className="text-sm text-slate-500">No saved versions yet.</p>
-                      <p className="text-xs text-slate-400 mt-1">
-                        Open the preview and click "Save" to create a version.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {savedDocs.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="flex items-center justify-between p-3 bg-slate-50 rounded border border-slate-200 hover:border-blue-300 transition-colors group"
-                        >
-                          <div>
-                            <h4 className="font-bold text-slate-800 text-sm">{doc.name}</h4>
-                            <p className="text-xs text-slate-500">
-                              {new Date(doc.createdAt).toLocaleString()}
-                            </p>
-                          </div>
+                {savedDocsLoading ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
+                    Loading saved versions...
+                  </div>
+                ) : savedDocs.length === 0 ? (
+                  <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-lg">
+                    <p className="text-slate-500">No saved versions found.</p>
+                    <p className="text-sm text-slate-400 mt-1">Generate a document and save it to see it here.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {savedDocs.map((doc) => (
+                      <div key={doc.id} className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-slate-800 truncate pr-2" title={doc.name}>
+                            {doc.name}
+                          </h4>
+                          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full whitespace-nowrap">
+                            v{doc.version}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-4">
+                          {new Date(doc.createdAt).toLocaleString()}
+                        </p>
+                        <div className="flex gap-2">
                           <button
                             onClick={() => window.open(`/tender-preview/${activeTender.id}?savedId=${doc.id}`, "_blank")}
-                            className="text-xs bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors flex items-center gap-1"
+                            className="flex-1 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded text-sm font-medium transition-colors flex items-center justify-center gap-1"
                           >
-                            <Eye className="w-3 h-3" /> View
+                            <Eye className="w-4 h-4" /> View
                           </button>
+                          <button
+                            onClick={() => deleteSavedDoc(doc.id)}
+                            className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+                            title="Delete Version"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Categories View */}
+        {view === "categories" && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-slate-900">
+                Manage Categories
+              </h1>
+              <button
+                onClick={() => {
+                  setCategoryForm({ id: null, name: "", description: "" });
+                  setIsEditing(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" /> Add Category
+              </button>
+            </div>
+
+            {isEditing && (
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8 animate-in slide-in-from-top-4">
+                <h3 className="text-lg font-semibold mb-4">
+                  {categoryForm.id ? "Edit Category" : "New Category"}
+                </h3>
+                <form onSubmit={saveCategory} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Name
+                    </label>
+                    <input
+                      name="name"
+                      value={categoryForm.name}
+                      onChange={handleCategoryChange}
+                      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={categoryForm.description}
+                      onChange={handleCategoryChange}
+                      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                      rows="3"
+                    />
+                  </div>
+                  <div className="flex gap-3 justify-end">
+                    <button
+                      type="button"
+                      onClick={cancelEdit}
+                      className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm"
+                    >
+                      Save Category
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {categories.map((cat) => (
+                <div
+                  key={cat.id}
+                  className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-lg text-slate-800">
+                      {cat.name}
+                    </h3>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => editItem(cat, "cat")}
+                        className="p-1.5 text-slate-400 hover:text-blue-600 rounded"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => requestDelete(cat.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-600 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
+                    {cat.description || "No description provided."}
+                  </p>
+                  <div className="flex items-center text-xs text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full w-fit">
+                    <Hash className="w-3 h-3 mr-1" />
+                    {terms.filter((t) => t.categoryId === cat.id).length} Terms
+                  </div>
+
+                  {deleteConfirmId === cat.id && (
+                    <div className="mt-4 p-3 bg-red-50 rounded-lg border border-red-100 animate-in fade-in">
+                      <p className="text-sm text-red-700 mb-2">
+                        Delete this category?
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => confirmDeleteCategory(cat.id)}
+                          className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={cancelDelete}
+                          className="px-3 py-1 bg-white text-slate-600 text-xs rounded border hover:bg-slate-50"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* GeM Master View */}
+        {view === "gem-master" && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-slate-900">
+                GeM Master Terms
+              </h1>
+              <button
+                onClick={() => {
+                  setTermForm({
+                    id: null,
+                    categoryId: "",
+                    title: "",
+                    description: "",
+                  });
+                  setIsEditing(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" /> Add Term
+              </button>
+            </div>
+
+            {isEditing && (
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8 animate-in slide-in-from-top-4">
+                <h3 className="text-lg font-semibold mb-4">
+                  {termForm.id ? "Edit Term" : "New Term"}
+                </h3>
+                <form onSubmit={saveTerm} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Category
+                      </label>
+                      <select
+                        name="categoryId"
+                        value={termForm.categoryId}
+                        onChange={handleTermChange}
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Title
+                      </label>
+                      <input
+                        name="title"
+                        value={termForm.title}
+                        onChange={handleTermChange}
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={termForm.description}
+                      onChange={handleTermChange}
+                      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                      rows="3"
+                    />
+                  </div>
+                  <div className="flex gap-3 justify-end">
+                    <button
+                      type="button"
+                      onClick={cancelEdit}
+                      className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm"
+                    >
+                      Save Term
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="space-y-6">
+              {categories.map((cat) => {
+                const catTerms = terms.filter((t) => t.categoryId === cat.id);
+                if (catTerms.length === 0) return null;
+
+                return (
+                  <div key={cat.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                      <h3 className="font-semibold text-slate-800">
+                        {cat.name}
+                      </h3>
+                      <span className="text-xs font-medium bg-white px-2 py-1 rounded border border-slate-200 text-slate-500">
+                        {catTerms.length} Terms
+                      </span>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {catTerms.map((term) => (
+                        <div
+                          key={term.id}
+                          className="p-4 hover:bg-slate-50 transition-colors group"
+                        >
+                          <div className="flex justify-between items-start gap-4">
+                            <div>
+                              <h4 className="font-medium text-slate-900 mb-1">
+                                {term.title}
+                              </h4>
+                              <p className="text-sm text-slate-600">
+                                {term.description}
+                              </p>
+                            </div>
+                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                              <button
+                                onClick={() => editItem(term, "term")}
+                                className="p-1.5 text-slate-400 hover:text-blue-600 rounded"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => requestDelete(term.id)}
+                                className="p-1.5 text-slate-400 hover:text-red-600 rounded"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {deleteConfirmId === term.id && (
+                            <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100 animate-in fade-in flex items-center justify-between">
+                              <span className="text-sm text-red-700">
+                                Delete this term?
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => confirmDeleteTerm(term.id)}
+                                  className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                                >
+                                  Confirm
+                                </button>
+                                <button
+                                  onClick={cancelDelete}
+                                  className="px-3 py-1 bg-white text-slate-600 text-xs rounded border hover:bg-slate-50"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {view === "categories" && (
-          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <button onClick={() => setView("form")}>
-                <ArrowLeft />
-              </button>
-              <h1 className="text-2xl font-bold">Categories</h1>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <h2 className="font-bold mb-4">
-                  {isEditing ? "Edit" : "Add"} Category
-                </h2>
-                <form onSubmit={saveCategory} className="space-y-4">
-                  <input
-                    name="name"
-                    value={categoryForm.name}
-                    onChange={handleCategoryChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Name"
-                    required
-                  />
-                  <textarea
-                    name="description"
-                    value={categoryForm.description}
-                    onChange={handleCategoryChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Desc"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      className="flex-1 bg-blue-600 text-white p-2 rounded"
-                    >
-                      Save
-                    </button>
-                    {isEditing && (
-                      <button
-                        type="button"
-                        onClick={cancelEdit}
-                        className="flex-1 border p-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                    )}
                   </div>
-                </form>
-              </div>
-              <div className="lg:col-span-2 space-y-3">
-                {categories.map((c) => (
-                  <div
-                    key={c.id}
-                    className="bg-white p-4 border rounded flex justify-between"
-                  >
-                    <div>
-                      <h3 className="font-bold">{c.name}</h3>
-                      <p className="text-sm">{c.description}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => editItem(c, "cat")}>
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => confirmDeleteCategory(c.id)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {view === "gem-master" && (
-          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <button onClick={() => setView("form")}>
-                <ArrowLeft />
-              </button>
-              <h1 className="text-2xl font-bold">GeM Master</h1>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <h2 className="font-bold mb-4">
-                  {isEditing ? "Edit" : "Add"} Term
-                </h2>
-                <form onSubmit={saveTerm} className="space-y-4">
-                  <select
-                    name="categoryId"
-                    value={termForm.categoryId}
-                    onChange={handleTermChange}
-                    className="w-full p-2 border rounded"
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    name="title"
-                    value={termForm.title}
-                    onChange={handleTermChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Title"
-                    required
-                  />
-                  <textarea
-                    name="description"
-                    value={termForm.description}
-                    onChange={handleTermChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Clause Text"
-                    rows="4"
-                    required
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      className="flex-1 bg-blue-600 text-white p-2 rounded"
-                    >
-                      Save
-                    </button>
-                    {isEditing && (
-                      <button
-                        type="button"
-                        onClick={cancelEdit}
-                        className="flex-1 border p-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </div>
-              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {terms.map((t) => (
-                  <div
-                    key={t.id}
-                    className="bg-white p-4 border rounded relative group"
-                  >
-                    <span className="text-[10px] bg-slate-100 font-bold px-2 py-1 rounded uppercase">
-                      {categories.find((c) => c.id === t.categoryId)?.name}
-                    </span>
-                    <h3 className="font-bold mt-2">{t.title}</h3>
-                    <p className="text-sm text-slate-600 mt-1 line-clamp-3">
-                      {t.description}
-                    </p>
-                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 flex gap-2">
-                      <button onClick={() => editItem(t, "term")}>
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => confirmDeleteTerm(t.id)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -1342,7 +1289,7 @@ function Dashboard() {
   );
 }
 
-export default function App() {
+function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
@@ -1350,3 +1297,5 @@ export default function App() {
     </Routes>
   );
 }
+
+export default App;

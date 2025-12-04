@@ -43,6 +43,8 @@ const TenderPreview = () => {
     const savedId = searchParams.get('savedId');
 
     const [data, setData] = useState(null);
+    const [terms, setTerms] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditable, setIsEditable] = useState(false);
@@ -51,6 +53,10 @@ const TenderPreview = () => {
     const [extraPages, setExtraPages] = useState([]);
     // State to preserve edits when re-rendering
     const [savedContent, setSavedContent] = useState({});
+
+    // Save Modal State
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+    const [saveName, setSaveName] = useState("");
 
     useEffect(() => {
         if (!id) {
@@ -68,6 +74,18 @@ const TenderPreview = () => {
                 console.log("Data fetched successfully:", response.data);
                 const tender = response.data;
 
+                // 2. Fetch Terms and Categories
+                const dashboardResponse = await axios.get(`http://localhost:5000/api/dashboard-data`);
+                const allTerms = dashboardResponse.data.terms || [];
+                const allCategories = dashboardResponse.data.categories || [];
+
+                // Filter selected terms
+                const selectedTermIds = tender.selectedTermIds || [];
+                const selectedTerms = allTerms.filter(term => selectedTermIds.includes(term.id));
+
+                setTerms(selectedTerms);
+                setCategories(allCategories);
+
                 // Map API response to component state structure
                 setData({
                     name_of_department: tender.departmentName || "N/A",
@@ -81,7 +99,7 @@ const TenderPreview = () => {
                     bid_validity: tender.bidValidity || "N/A"
                 });
 
-                // 2. If savedId exists, fetch the saved document state
+                // 3. If savedId exists, fetch the saved document state
                 if (savedId) {
                     console.log(`Fetching saved document: ${savedId}`);
                     const savedDocResponse = await axios.get(`http://localhost:5000/api/documents/${savedId}`);
@@ -145,9 +163,14 @@ const TenderPreview = () => {
         setExtraPages([...extraPages, { id: Date.now() }]);
     };
 
-    const handleSaveDocument = async () => {
-        const name = prompt("Enter a name for this saved version (e.g., 'Draft 1'):");
-        if (!name) return;
+    const handleSaveClick = () => {
+        setSaveName(""); // Reset name
+        setIsSaveModalOpen(true);
+    };
+
+    const confirmSave = async (e) => {
+        e.preventDefault();
+        if (!saveName.trim()) return;
 
         const currentContent = saveCurrentContent();
         // Update state locally first
@@ -156,18 +179,33 @@ const TenderPreview = () => {
         try {
             const payload = {
                 tenderId: id,
-                name: name,
+                name: saveName,
                 pages: currentContent,
                 extraPages: extraPages
             };
 
             await axios.post('http://localhost:5000/api/documents', payload);
+            setIsSaveModalOpen(false);
             alert("Document saved successfully!");
         } catch (err) {
             console.error("Error saving document:", err);
             alert("Failed to save document.");
         }
     };
+
+    // Helper to group terms by category
+    const getTermsByCategory = () => {
+        const grouped = {};
+        terms.forEach(term => {
+            if (!grouped[term.categoryId]) {
+                grouped[term.categoryId] = [];
+            }
+            grouped[term.categoryId].push(term);
+        });
+        return grouped;
+    };
+
+    const groupedTerms = getTermsByCategory();
 
     if (loading) return <div className="p-8 text-center">Loading document...</div>;
     if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
@@ -303,11 +341,11 @@ const TenderPreview = () => {
                 </button>
 
                 <button
-                    onClick={handleSaveDocument}
+                    onClick={handleSaveClick}
                     className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition-colors font-sans"
                 >
                     <Save size={20} />
-                    Save
+                    Save Version
                 </button>
 
                 <button
@@ -321,6 +359,47 @@ const TenderPreview = () => {
                     {isEditable ? 'Finish Editing' : 'Edit Document'}
                 </button>
             </div>
+
+            {/* SAVE MODAL */}
+            {isSaveModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100">
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <Save className="w-5 h-5 text-indigo-600" />
+                            Save Document Version
+                        </h3>
+                        <form onSubmit={confirmSave}>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Version Name
+                            </label>
+                            <input
+                                type="text"
+                                autoFocus
+                                value={saveName}
+                                onChange={(e) => setSaveName(e.target.value)}
+                                placeholder="e.g. Draft 1, Final Review..."
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                required
+                            />
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsSaveModalOpen(false)}
+                                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium shadow-sm transition-colors"
+                                >
+                                    Save Version
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* --- PAGE 1: Header & Title Info --- */}
             <div className="doc-font text-black leading-snug">
@@ -445,7 +524,7 @@ const TenderPreview = () => {
                         </p>
                     </div>
 
-                    {/* SECTION I Part 1 */}
+                    {/* SECTION I: INSTRUCTIONS FOR BIDDERS (Hardcoded + Dynamic) */}
                     <div className="mt-8">
                         <h3 className="text-lg font-bold uppercase underline mb-4 text-center">SECTION I: INSTRUCTIONS FOR BIDDERS</h3>
 
@@ -462,7 +541,7 @@ const TenderPreview = () => {
                 </PageLayout>
             </div>
 
-            {/* --- PAGE 3: Instructions Part 2 (Text continued naturally) --- */}
+            {/* --- PAGE 3: Instructions Part 2 & Dynamic Terms --- */}
             <div className="doc-font text-black leading-snug">
                 <PageLayout
                     pageNumber={3}
@@ -481,6 +560,32 @@ const TenderPreview = () => {
                                 <strong>Documentation:</strong> Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.
                             </p>
                         </div>
+
+                        {/* DYNAMIC TERMS RENDERED HERE */}
+                        <div className="mt-8 space-y-6">
+                            {categories.map((cat, index) => {
+                                const catTerms = groupedTerms[cat.id];
+                                if (!catTerms || catTerms.length === 0) return null;
+
+                                return (
+                                    <div key={cat.id}>
+                                        <h4 className="text-md font-bold uppercase mb-2 underline">
+                                            SECTION {index + 2}: {cat.name.toUpperCase()}
+                                        </h4>
+                                        <div className="space-y-3 pl-2">
+                                            {catTerms.map((term, tIndex) => (
+                                                <div key={term.id}>
+                                                    <p>
+                                                        <strong>{index + 2}.{tIndex + 1} {term.title}:</strong> {term.description}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
                     </div>
                 </PageLayout>
             </div>
