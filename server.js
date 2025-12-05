@@ -140,6 +140,30 @@ app.post("/api/tenders", async (req, res) => {
   }
 });
 
+app.put("/api/tenders/:id", async (req, res) => {
+  try {
+    const updatedTender = await Tender.findOneAndUpdate(
+      { id: parseInt(req.params.id) },
+      req.body,
+      { new: true }
+    );
+    if (!updatedTender) return res.status(404).json({ error: "Tender not found" });
+    res.json(updatedTender);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete("/api/tenders/:id", async (req, res) => {
+  try {
+    const result = await Tender.findOneAndDelete({ id: parseInt(req.params.id) });
+    if (!result) return res.status(404).json({ error: "Tender not found" });
+    res.json({ message: "Tender deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- SAVED DOCUMENTS SCHEMA & ROUTES ---
 const SavedDocumentSchema = new mongoose.Schema({
   id: Number,

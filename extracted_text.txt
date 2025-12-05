@@ -1,0 +1,980 @@
+
+
+
+
+
+
+Himachal Pradesh University,
+
+(NAAC Accredited ‘A’ Grade University)
+
+“{{name_of_department}} “
+
+
+
+
+
+
+
+
+
+Bid Document for {{procurement_title}} for {{name_of_department}}
+
+
+
+     Website: https://www.hpuniv.ac.in 
+
+ E-mail : {{email_of_department}}
+
+
+
+
+
+SUMMARY
+
+Sr. No.
+
+Description
+
+Details
+
+
+
+Item Description
+
+{{tender_title}}
+
+
+
+Quantity
+
+{{ quantity}}
+
+
+
+Department
+
+{{name_of_department}}
+
+
+
+Bid Start Date & Time
+
+[as mentioned in Gem Bid Document]
+
+
+
+Bid End Date & Time
+
+[as mentioned in Gem Bid Document]
+
+
+
+Pre-Bid Meeting
+
+[as mentioned in Gem Bid Document]
+
+
+
+Earnest Money Deposit (EMD)
+
+{{get value from the form}}
+
+
+
+Performance Security
+
+{{get value from the form}}
+
+
+
+Pledge of EMD / PBG
+
+EMD and Performance Bank Guarantee (PBG) must be pledged only in the name of: {{EMD_officer}}
+
+
+
+Bid Validity
+
+{{bid_validity}} days from the date of publication of bid.
+
+
+
+
+
+
+
+
+
+
+
+Note: The terms and conditions specified in this tender document shall prevail over the terms and conditions available on the GeM portal in case of any conflict.
+
+
+
+
+
+
+
+
+
+
+
+SECTION I: INSTRUCTIONS FOR BIDDERS 
+
+Bid Submission: Bidders must be registered on the Government e-Marketplace (GeM) portal. All bids, including technical and financial components, must be submitted exclusively online through the GeM portal (gem.gov.in) before the specified deadline. Physical or offline bids will not be accepted.
+
+Governing Terms: This bid process will be governed by the General Terms and Conditions (GTC) of GeM in addition to the Additional Terms and Conditions (ATC) specified in this document. In case of any conflict, the terms specified in this document will prevail.
+
+Digital Signature: Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).
+
+Documentation: Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.
+
+
+
+SECTION II: TERMS & CONDITIONS OF CONTRACT (ATC)
+
+1. General Conditions
+
+1.1. Scope of Work: The scope shall include Supply, Installation, Commissioning, & Satisfactory Demonstration of the Vector Network Analyzer. This will also include testing, packing, transportation, transit insurance, delivery at the site, unloading, and any other services associated with the delivery of the equipment. The successful bidder will assume full responsibility for the complete system until final acceptance.
+
+1.2. No Gratification Clause: The bidder must provide an undertaking that they will not attempt to gratify any person or use any unfair means to influence the purchase process. Any such action will debar the company from participating in this and future tenders, and suitable action will be initiated.
+
+
+
+1.3. No Cartel Formation: Bidders shall not form a cartel or submit supporting quotations for other companies. Evidence of such practices will lead to disqualification.
+
+1.4. Purchaser's Right to Vary Quantities: The Purchaser reserves the right to increase or decrease the quantity to be ordered at the time of placement of the contract. The purchaser also reserves the right to place a repeat order during the currency of the contract at the contracted rates. Bidders are bound to accept the orders accordingly.
+
+1.5. Purchaser’s Right to Accept or Reject Bids: The Purchaser reserves the right to accept or reject any bid, and to annul the bidding process and reject all bids at any time prior to the award of contract, without thereby incurring any liability to the affected bidder(s).
+
+1.6. Patents, Copyrights, and Indemnification: The successful bidder shall protect and fully indemnify the Purchaser from any claims for infringement of patents, copyright, trademark, or the like. The successful bidder shall also be responsible for compliance with all legal requirements and shall indemnify the Purchaser from any claims or penalties arising out of any infringements.
+
+1.7. Restrictions on Procurement: Any bidder from country which shares a land border with India will be eligible to bid in this procurement process if the bidder is registered with competent authority constituted by Department for promotion of industry and internal trade (DPIIT) or any other body as created by Govt. of India/Ministry of Finance, Department of Expenditure, Public Procurement Division New Delhi.
+
+Bidder from a country which shares a land border with India for purpose of this bid means: -
+
+An entity incorporated, established or registered in such a country; or  
+
+A subsidiary of an entity incorporated, established or registered in such a country; or  
+
+An entity substantially controlled through entities incorporated, established or registered in such a country; or  
+
+An entity whose beneficial owner is situated in such a country; or
+
+An Indian (or other) agent of such entity; or 
+
+A natural person who is citizen of such country; or
+
+A consortium or joint venture where any member of the consortium or joint venture falls under any above.
+
+
+
+2. Eligibility Criteria
+
+Bidder Status 
+
+The bidder shall be an OEM Manufacturer, Direct Importer, or Authorized Dealer/Distributor of the OEM. Authorized Dealers/Distributors must submit a current, bid-specific Manufacturer’s Authorization Form (MAF).
+
+
+
+Experience 
+
+The bidder must have a minimum of three (03) years’ experience in India in supply, installation, and commissioning of similar scientific test and measurement equipment. Supporting documents shall include Purchase Orders and corresponding Consignee Receipt and Acceptance Certificates (CRACs) for last three financial years i.e. 2022-2023, 2023-2024, 2024-2025.
+
+
+
+Past Performance 
+
+Past Performance: The Bidder or its OEM should have supplied same or similar Category Products for (percentage as specified in gem bid document) of bid quantity, in at least one of the last three financial years before the bid opening date to any Central / State Govt Organization / PSU. Copies of relevant contracts (proving supply of cumulative order quantity in any one financial year) to be submitted along with bid in support of quantity supplied in the relevant financial year. 
+
+
+
+Financial Capacity 
+
+If the bidder is the OEM (Original Equipment Manufacturer): The bidder must have a minimum average annual turnover of INR 1 Crore over the last three financial years (2022–23, 2023–24, and 2024–25). The turnover must be certified by a Chartered Accountant, and supported by audited financial statements for the respective years.
+
+
+
+If the bidder is an Authorized Dealer/Distributor: The bidder must submit:
+
+Its own Annual Turnover Certificate for the last three financial years (2022–23, 2023–24, and 2024–25), duly certified by a Chartered Accountant, along with audited financial statements.
+
+The OEM’s Annual Turnover Certificate for the same period, also duly certified by a Chartered Accountant, supported by the OEM’s audited financial statements. Both the bidder and the OEM must individually meet the minimum average annual turnover requirement of INR 1 Crore.
+
+Income Tax Returns 
+
+The bidder shall submit Income Tax Returns (ITRs) statement for the financial years 2022–23, 2023–24, and 2024–25.
+
+
+
+Tax and Registration Compliance 
+
+The bidder must hold valid PAN and GST Registration, and be registered on the GeM portal.
+
+
+
+Blacklisting Declaration 
+
+A notarized self-declaration on non-judicial stamp paper must be submitted, confirming that the firm has not been blacklisted/debarred by any Central/State Government Department, PSU, or Government organization.
+
+
+
+Land-Border Compliance 
+
+Compliance with Government of India restrictions, on procurement from bidders of countries sharing land borders with India must be declared. Certificate to be submitted as per applicable format.
+
+
+
+3. Earnest Money Deposit (EMD)
+
+EMD Requirement: The bidder shall submit an Earnest Money Deposit (EMD) of ₹5,00,000 (Rupees Five Lakhs only) along with the bid. The EMD shall be submitted in any of the following forms:
+
+Fixed Deposit Receipt (FDR) from a nationalized bank, duly pledged in the name of Finance Officer, Himachal Pradesh University, Shimla.
+
+Bank Guarantee (BG) from a nationalized bank, drawn in favor of Finance Officer, Himachal Pradesh University, Shimla.
+
+Submission of Original EMD Instrument
+
+The original EMD instrument (FDR or BG) must be physically submitted to the office of the Chairperson, Department of Physics, Himachal Pradesh University, Summerhill, Shimla – 171005, before or within five (05) working days after the last date of bid submission on the GeM portal. The envelope must be clearly labelled with the bid reference number, bidder name, and contact details.
+
+
+
+Refund of EMD
+
+EMD of unsuccessful bidders shall be refunded after finalization of the tender and within 30 days from the award of contract to the successful bidder.
+
+EMD of the successful bidder shall be refunded upon submission of Performance Security and execution of the contract agreement.
+
+No claim for interest on EMD shall be entertained under any circumstances.
+
+
+
+Forfeiture of EMD The EMD shall be liable to forfeiture under the following conditions:
+
+If the bidder withdraws or modifies the bid during the bid validity period.
+
+If the successful bidder fails to sign the contract or submit the required Performance Security within the stipulated time.
+
+If any document submitted is found to be false or misleading.
+
+Bid Rejection Bids submitted without valid EMD shall be summarily rejected.
+
+
+
+4. Performance Security
+
+Requirement: The successful bidder shall be required to furnish a Performance Bank Guarantee (PBG) i.e. 10% of the total contract value. This guarantee shall be submitted within 10 days from the date of the issuance of the Letter of Intent (LOI)/award of contract.
+
+
+
+Form of Guarantee: The PBG shall be in the form of an unconditional and irrevocable FDR or bank guarantee issued by a Nationalized Bank in favour of Finance Officer, Himachal Pradesh University, Summer Hill, Shimla. The PBG shall remain valid for a period of at least two months beyond the completion of the contract period and or warranty period.
+
+
+
+Purpose: The PBG shall serve as security for the due performance of the contract and shall cover any failure or default in the execution of the contract by the successful bidder.
+
+
+
+Forfeiture: In the event of any breach of contract, failure to perform the obligations as per the terms of the contract, or failure to deliver the services/materials within the stipulated time frame, the PBG shall be forfeited in part or in full, as determined by Himachal Pradesh University.
+
+
+
+Release of Guarantee: The PBG shall be released after the successful completion of the contract and upon submission of a written request by the contractor, along with a certificate of satisfactory performance from the Chairperson, Department of Physics, Himachal Pradesh University.
+
+
+
+Non-Compliance: Failure to submit the PBG within the stipulated time by the L1 bidder shall result in the cancellation of the contract and forfeiture of the Earnest Money Deposit (EMD).
+
+
+
+5. Technical Specifications
+
+The detailed technical specifications of the Vector Network Analyzer are provided in Annexure -VIII. The specifications mentioned in this document will prevail over the specification mentioned in gem bid document in case of any conflict. Bidder are advised to go review these specification carefully before submitting their bid online.
+
+
+
+6. Bid Evaluation
+
+6.1. Bids will be evaluated by a Technical Evaluation Committee. The committee will first examine the technical bids to determine if they are complete, responsive, and conform to all terms, conditions, and specifications.
+
+6.2. A substantially responsive bid is one that conforms to all conditions without material deviations or reservations. The committee may waive any minor non-conformity or irregularity that does not constitute a material deviation.
+
+6.3. Bidders who qualify the technical evaluation will be considered for the financial bid opening.
+
+6.4. The contract will be awarded to the bidder who is technically qualified and quotes the lowest price (L1) as per GeM evaluation rules.
+
+
+
+7. Signing of Contract
+
+7.1. The successful bidder shall be required to execute an agreement on a non-judicial stamp paper of Rs. 100 with the University within 21 days of the issue of the purchase order. This agreement will formalize the terms and conditions of the contract. Failure to do so may result in the annulment of the award and forfeiture of the EMD.
+
+8. Prices
+
+8.1. Prices must be quoted in Indian Rupees (INR) only, on the GeM portal.
+
+8.2. The quoted price must be all-inclusive (FOR destination) and cover all costs such as basic price, packing, forwarding, freight, transit insurance, all applicable taxes (GST), duties, handling, loading/unloading, and any other charges for delivery and installation at the Department of Physics, HPU, Shimla.
+
+8.3. No price variation, escalation, or additional claims on account of market fluctuations will be permitted after the submission of the bid.
+
+
+
+9. Delivery, Installation, and Commissioning
+
+9.1. Timeline: The equipment must be delivered, installed, tested, and commissioned within 60 days from the date of issue of the supply order.
+
+9.2. Late Delivery/Installation Penalty: A penalty of 0.5% of the total contract value per week of delay will be imposed for delays in delivery/installation, up to a maximum of 10% of the contract value.
+
+9.3. Failure to Deliver: If the delay exceeds the period for which the maximum penalty is applicable (20 weeks), the University reserves the right to cancel the purchase order, forfeit the Performance Security, and blacklist the firm.
+
+9.4. Training: The supplier shall be responsible for providing comprehensive training on the operation, maintenance, and basic troubleshooting of the equipment to faculty/staff at no extra cost.
+
+9.5. Site Preparation: The Purchaser shall provide the site for installation as per the environmental and electrical specifications prescribed by the supplier. It is the supplier's responsibility to provide these site requirements in advance.
+
+10. Inspection and Tests
+
+10.1. The Purchaser or its representative shall have the right to inspect and/or test the equipment to confirm its conformity to the contract specifications at no extra cost to the Purchaser. The Purchaser may also opt for a Third-Party Inspection (TPI) at its own discretion.
+
+10.2. On Inspection, should any inspected or tested equipment fail to conform to the specifications, the Purchaser may reject the equipment, and the supplier shall either replace the rejected equipment or make necessary alterations to meet specification requirements free of cost.
+
+10.3. For the purpose of taking over the equipment, a final acceptance test shall be carried out at the Purchaser's site. Only the equipment that meets all acceptance test criteria shall be accepted.
+
+
+
+11. Technical Documentation and Manuals
+
+11.1. The bidder shall supply one complete set of technical documentation with the equipment, which must include detailed Operations, Installation, and Maintenance manuals in English. The manuals should be comprehensive enough to provide clear guidance to maintenance personnel.
+
+12. Warranty
+
+12.1. The equipment, including all parts and accessories, must be covered under a comprehensive on-site warranty for a minimum period of 3 years from the date of successful installation and commissioning.
+
+12.2. Warranty charges shall not be quoted separately; they must be included in the price of the equipment. Offers with separate warranty charges will be summarily rejected.
+
+12.3. If the performance of the equipment is not satisfactory during the warranty period, it shall be replaced by the supplier free of cost. The warranty period for the replaced parts/equipment shall be extended for a period equal to the downtime.
+
+
+
+13. Technical Assistance and Maintenance (After-Sales Service)
+
+13.1. During the warranty period, the bidder must provide technical assistance/maintenance for the product within 48 hours of a ticket being raised by the department. The firm must provide an uptime guarantee of 95%.
+
+13.2. Failure to provide service within the stipulated time will attract a penalty of Rs. 5,000/- per day upto first week, and Rs. 10,000/- per day thereafter.
+
+13.3. This penalty amount will be deducted from the Performance Security deposited by the bidder.
+
+13.4. If a bidder fails to provide maintenance service for a continuous period of 45 days, the Performance Bank Guarantee (PBG) will be forfeited, and the firm will be blacklisted from participating in future tenders of the University.
+
+13.5. Bidders shall furnish details of their back-up engineering and system support infrastructure available in India.
+
+
+
+14. Spare Parts Availability
+
+14.1.  The bidder must provide a self-declaration/undertaking that it will provide/keep spare parts for the product for at least 7 years after the completion of the warranty period.
+
+
+
+15. Packing and Marking
+
+15.1. All packing must be strong enough to withstand rough handling during transit. Fragile articles must be packed with special precautions and shall bear markings like 'FRAGILE', 'HANDLE WITH CARE', and 'THIS SIDE UP'.
+
+15.2. All delicate surfaces of the equipment shall be carefully protected with appropriate materials to prevent rusting and damage. The supplier shall be liable for any damage attributable to defective or insufficient packing.
+
+
+
+16. Substitution and Change of Model
+
+16.1. Unauthorized substitution or materials delivered that do not comply with the specified description or quality shall be taken back by the supplier at their own cost and risk.
+
+16.2. No change of model after the placement of the order shall be entertained unless the alternate model offered is equivalent or higher in specifications and written approval has been obtained from the Purchaser prior to delivery.
+
+
+
+17. Payment Terms
+
+17.1. 100% payment will be released after successful delivery, installation, commissioning, and acceptance of the equipment by the designated committee.
+
+18. Price Fall Clause
+
+18.1. The bidder undertakes that they have not supplied/are not supplying an identical article/equipment to any other government organization, department, or PSU in India at a price lower than the price quoted in the present bid.
+
+18.2. If during the contract period, the bidder reduces the sale price or sells the same article/equipment to any other entity at a price lower than the one agreed upon in this contract, the price payable for the equipment under this contract will be automatically reduced to match the lower price. The supplier must furnish a certificate to this effect with each bill.
+
+
+
+19. Termination of Contract
+
+19.1. Termination for Default: The purchaser may, without prejudice to any other remedy for breach of contract, terminate the contract in whole or in part if the supplier fails to deliver or install the system within the specified time period or fails to perform any other obligation(s) under the contract.
+
+19.2. Termination for Insolvency: The purchaser may terminate the contract at any time if the supplier becomes bankrupt or otherwise insolvent.
+
+
+
+20. Force Majeure
+
+20.1. Neither party shall be held responsible for any failure or delay in performance of their obligations if such failure or delay arises from an act of God (fire, flood, earthquake), civil strikes, government regulations, riots, or any other reason beyond the supplier's control, provided that notice of such an event is given to the other party within two weeks of its occurrence.
+
+21. Arbitration and Jurisdiction
+
+21.1. Any disputes arising out of this contract shall be subjected to the sole arbitration of the Vice-Chancellor, Himachal Pradesh University, Shimla, whose decision shall be final and binding on both parties.
+
+21.2. The Courts at Shimla, Himachal Pradesh, shall have exclusive jurisdiction to try any matter, dispute, or reference arising out of this contract.
+
+
+
+22. Right of Acceptance
+
+University’s Right to Accept or Reject Bids:
+
+Himachal Pradesh University (HPU) reserves the absolute right to accept or reject any bid, even the lowest quoted bid (L1), without assigning any reason.
+
+The university also holds the right to cancel the bidding process entirely if deemed necessary
+
+
+
+No Obligation to Award:
+
+Submission of a bid does not guarantee contract award. HPU is not bound to accept the lowest bid or any bid that does not meet its evaluation standards.
+
+
+
+Rejection of Incomplete or Non-Compliant Bids:
+
+Any bid that fails to comply with tender conditions, eligibility requirements, or submission guidelines may be rejected. Bids containing incomplete documentation, false information, or conditional offers will not be considered.
+
+
+
+Discretion of University Authorities:
+
+The decision of HPU’s procurement committee and competent authority shall be final and binding regarding bid selection and rejection. 
+
+HPU reserves the right to negotiate prices through RA (Reverse Auction), if required, modify contract conditions, or seek clarifications before awarding the tender.
+
+
+
+Contract Cancellation or Re-tendering:
+
+If it is found that the lowest bidder’s rates are unreasonable, inflated, or non-compliant, HPU may choose to reject the bid and call for a fresh tender process.
+
+In case of fraudulent practices or misrepresentation, the university reserves the right to blacklist the bidder and cancel the contract if awarded.
+
+
+
+
+
+Yours faithfully,
+
+
+
+
+
+
+
+          Chairperson,
+
+           Department of Physics,
+
+         Himachal Pradesh University,
+
+        Summerhill, Shimla 171005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Annexure-I
+
+Compliance Sheet
+
+S.N.
+
+Particulars
+
+Yes/No
+
+
+
+Manufacturer's Authorization Form (MAF) (if applicable) – Annexure-II
+
+
+
+
+
+Non-Blacklisting Undertaking (on non-judicial stamp paper of Rs. 100)
+
+
+
+
+
+PAN Card
+
+
+
+
+
+GST Registration Certificate
+
+
+
+
+
+Income Tax Returns (ITR) for financial years 2022-2023, 2023-2024, and 2024-2025
+
+
+
+
+
+Copies of Purchase Orders and satisfactory installation reports for 2022-23, 2023-24, and 2024-25 
+
+
+
+
+
+Proof of Past performance as per Clause 2 Point (3)
+
+
+
+
+
+Technical Data Sheet/Brochure for the offered model
+
+
+
+
+
+Undertaking for spare parts availability for at least 7 years after warranty period – Annexure-IV
+
+
+
+
+
+Undertaking regarding No Gratification
+
+
+
+
+
+Unconditional Acceptance Letter of all bid terms and conditions – Annexure-I
+
+
+
+
+
+Bidder's Profile (company profile, infrastructure, service support) – Annexure-V
+
+
+
+
+
+Signed and stamped copy of the entire bid document (each page)
+
+
+
+
+
+Earnest Money Deposit (EMD) 
+
+
+
+
+
+Certificate of Annual Turnover for the last three financial years (2022–23, 2023–24, 2024–25) duly certified by a Chartered Accountant, along with audited financial statements of the bidder.
+
+
+
+
+
+
+
+
+
+Certificate of Annual Turnover for the last three financial years (2022–23, 2023–24, 2024–25) duly certified by a Chartered Accountant, along with audited financial statements of the OEM (required if bidder is an authorized dealer/distributor).
+
+
+
+
+
+
+
+
+
+Authorization Letter for Bid Submission on Behalf of the Firm – Annexure-VII
+
+
+
+
+
+Certificate regarding restrictions on procurement from countries sharing a land border with India (Annexure-VI)
+
+
+
+
+
+Bid Form (Annexure-III)
+
+
+
+
+
+Technical Specifications Compliance Chart (Annexure-VIII)
+
+
+
+Note: All undertakings and self-declarations must be submitted only on the company’s official letterhead, duly signed and stamped by an authorized representative.
+
+DECLARATION
+
+I / We hereby declare that the information furnished above are true and based on available documentary evidences. In case, any of the information furnished above, either in full or in part, is at any stage, found to be incorrect, our bid shall stand cancelled or if contract has been awarded, the same shall stand terminated.
+
+That the firm has carefully read and understood the tender document and agrees with all the terms and conditions of the tender.
+
+
+
+
+
+        (Authorized Signatory) 
+
+        Full Name and Designation
+
+            Official Seal
+
+Annexure-II
+
+To be enclosed with Technical Bid
+
+Proforma for Authority from Manufacturers
+
+
+
+Dated ……………………………………………….
+
+
+
+To
+
+The Chairman
+
+Department of Physics
+
+Himachal Pradesh University, Shimla-5
+
+
+
+Dear Sir,
+
+We …………………………an established and reputed manufacturers of ………………………. Having factories at …………………………… and office at M/s……………………………………………………………………hereby authorize (Name and Address of the Authorized representative) to represent us, to tender, negotiate and conclude the contract on our behalf with you against Tender no ………………………………………
+
+                                                                                                        
+
+Yours faithfully
+
+
+
+Signature and seal                                                                                                                      
+
+Name…………………………………..                                                 			 	
+
+(Name of Manufacturer)
+
+
+
+
+
+
+
+Annexure-III
+
+TO BE ENCLOSED WITH TECHNICAL BID
+
+BID FORM
+
+      Dated: ……………………..
+
+To
+
+		The Chairperson, 
+
+		Department of Physics,
+
+		H.P. University, Summerhill, Shimla 171005
+
+Sir,
+
+
+
+Having examined the Bidding Documents of Tender No…………………………………….undersigned offer to supply, install, commission, operate maintain………………………………..and we undertake, if our bid is accepted, to complete delivery of all the items specified in the contract within ………………….weeks calculated from the date of receipt of your Notification of Award and to complete the installation, testing commissioning……………………………. We also undertake to supply the CMC and consumables on the rates offered/negotiated (in case our bid is accepted) for the entire period of …………………. years from the date of satisfactory installation.
+
+
+
+
+
+        Signature and Seal
+
+
+
+     
+
+       Authorized Signatory
+
+
+
+
+
+Annexure-IV
+
+To be enclosed with Technical Bid
+
+Proforma of Guarantee for Supply of Spares during and Post Warranty Period
+
+      Dated: ……………………..
+
+To
+
+		The Chairperson, 
+
+		Department of Physics,
+
+		H.P. University, Summerhill, Shimla 171005.
+
+Dear Sir,
+
+We the supplier hereby give a guarantee for the supply of all necessary spares demanded for the routine and emergency maintenance of being supplied by us to for a period of not less than seven (07) years after the warranty period of 3 years.
+
+
+
+We further clarify that for the first 3 years i.e. warranty period; we are covered by the warranty clause as mentioned. For the remaining period of seven (07) Years, a detailed list of spares will be supplied to the purchaser for the purpose of enabling him to decide spares needed for routine and emergency maintenance.
+
+
+
+
+
+
+
+       Signature and Seal
+
+     
+
+
+
+       Authorized Signatory
+
+
+
+
+
+
+
+
+
+
+
+
+
+Annexure-V
+
+To be enclosed with Technical Bid
+
+Bidder Profile
+
+ General Information
+
+Location of Corporate Headquarters
+
+Date and Country of Incorporation
+
+Name of the Bidder
+
+Postal address
+
+Mobile No
+
+E-mail Id (Primary)
+
+Alternative E-mail Id
+
+Website
+
+GST No.
+
+PAN
+
+Type of Supplier:   Manufacturer    or      Direct Importer
+
+Manufacturing facility(ies)
+
+Location
+
+Size
+
+Capacity
+
+No. of service Facilities in India
+
+Location
+
+Strength
+
+Area covered
+
+Geographical Distribution of the supplier 
+
+No. of offices
+
+Locations
+
+Staff Strength
+
+Total No. of installations of the system offered
+
+
+
+
+
+
+
+
+
+   
+
+      Signature and Seal
+
+    
+
+
+
+       Authorized Signatory
+
+ANNEXURE-VI
+
+Certificate from Bidder
+
+(To be submitted on company’s letter head)
+
+
+
+TO WHOMSOEVER IT MAY CONCERN
+
+In compliance with the Ministry of Finance, Department of Expenditure Order (Public Procurement No. 1) dated 23rd July 2020, pertaining to restrictions under Rule 144 (xi) of the General Financial Rules (GFRs), 2017, we hereby certify the following:
+
+We have read and fully understood the clause regarding restrictions on procurement from bidders of countries that share a land border with India.
+
+We certify that our firm, [Enter Firm Name], is not from such a country.
+
+OR
+
+We certify that our firm, [Enter Firm Name], is from such a country and has been duly registered with the Competent Authority as stipulated in the aforementioned Order. A copy of the valid registration certificate is attached herewith.
+
+(Please strike out whichever clause is not applicable).
+
+We confirm that we fulfil all requirements in this regard and are eligible to be considered for this procurement.
+
+We understand and accept that if this declaration is found to be false or misleading, it will constitute a ground for immediate termination of the contract and may result in further legal action in accordance with the law.
+
+
+
+Sincerely,
+
+(Signature of the Authorized
+
+Signatory with Company Stamp)
+
+Name: ________________________
+
+Designation: __________________
+
+Company: ____________________
+
+Address: ______________________
+
+Date: _________________________
+
+
+
+Annexure-VII
+
+To be enclosed with Technical Bid
+
+       Authorization for Representative
+
+     Dated: ……………………...
+
+To
+
+		The Chairperson, 
+
+		Department of Physics,
+
+		H.P. University, Summerhill, Shimla 171005.
+
+Sir,
+
+We, M/s ____________________________________, hereby authorize Mr./Ms. ____________________________________, holding the designation of ____________________________________ in our organization, to represent our company in all matters related to the above-referenced bid.
+
+He/She is duly authorized to:
+
+Sign and submit all bid documents, including forms, annexures, and any subsequent clarifications or correspondence on our behalf.
+
+Participate in the pre-bid meetings and bid opening proceedings.
+
+Engage in any negotiations and make commitments on behalf of our company.
+
+The specimen signature of the authorized representative is attested below for your verification and record.
+
+Specimen Signature of Authorized Representative:
+
+
+
+(Mr./Ms. _____________________)
+
+We hereby undertake that all acts, correspondence, and commitments made by our authorized representative shall be binding on our company.
+
+This authorization is valid for the entire duration of the bidding process.
+
+Sincerely,
+
+(Signature of the Director / Proprietor / Company Secretary with Company Stamp)
+
+Bid reference No.: __________________
+
+Name: ________________________
+
+Designation: __________________
+
+Company Seal:
+
+
+
+Annexure – VIII
+
+Technical Specification Compliance Chart
+
+
+
+Enter specifications table here
+
+Note: Bidder/s must submit Brochure consisting of good quality original photographs of above equipment with complete technical details.
+
+Bidder/s must also submit “Compliance Statement of the Technical specifications”. 
+
+The competent Authority has right not to place supply order for above items subject to the funds available. 
+
+
+

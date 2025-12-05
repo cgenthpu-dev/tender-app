@@ -58,6 +58,20 @@ const TenderPreview = () => {
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
 
+    const [paginatedTerms, setPaginatedTerms] = useState([]);
+
+    // Helper to group terms by category
+    const getTermsByCategory = () => {
+        const grouped = {};
+        terms.forEach(term => {
+            if (!grouped[term.categoryId]) {
+                grouped[term.categoryId] = [];
+            }
+            grouped[term.categoryId].push(term);
+        });
+        return grouped;
+    };
+
     useEffect(() => {
         if (!id) {
             console.error("No ID found in URL parameters");
@@ -124,8 +138,139 @@ const TenderPreview = () => {
         fetchData();
     }, [id, savedId]);
 
-    const staticPagesCount = 3;
-    const totalPages = staticPagesCount + extraPages.length;
+    useEffect(() => {
+        if (categories.length === 0 || terms.length === 0) return;
+
+        const CHARS_PER_PAGE = 2500;
+        const pages = [];
+        let currentPage = [];
+        let currentChars = 0;
+
+        // Helper to split text at the nearest space
+        const splitText = (text, limit) => {
+            if (text.length <= limit) return [text, ""];
+            let splitIndex = text.lastIndexOf(' ', limit);
+            // If no space found or space is too far back (less than 70% of limit), force split at limit
+            if (splitIndex === -1 || splitIndex < limit * 0.7) splitIndex = limit;
+            return [text.substring(0, splitIndex), text.substring(splitIndex)];
+        };
+
+        // --- Static Intro for the First Terms Page ---
+        const staticIntro = (
+            <div key="static-intro" className="mt-4 mb-8">
+                <div className="text-justify text-md space-y-4 px-2 leading-relaxed">
+                    <p>
+                        <strong>Digital Signature:</strong> <span style={{ fontWeight: 'normal' }}>Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).</span>
+                    </p>
+                    <p>
+                        <strong>Documentation:</strong> <span style={{ fontWeight: 'normal' }}>Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.</span>
+                    </p>
+                </div>
+            </div>
+        );
+        currentPage.push(staticIntro);
+        currentChars += 600;
+
+        // --- Group and Paginate Terms ---
+        const grouped = getTermsByCategory();
+
+        categories.forEach((cat, catIndex) => {
+            const catTerms = grouped[cat.id];
+            if (!catTerms || catTerms.length === 0) return;
+
+            // --- Category Header Logic ---
+            const headerBlock = (
+                <h4 key={`cat-${cat.id}`} className="text-lg font-bold uppercase mb-4 mt-6">
+                    SECTION {catIndex + 2}: {cat.name.toUpperCase()}
+                </h4>
+            );
+            const headerCost = 150;
+
+            // Orphan Control
+            if (currentChars > CHARS_PER_PAGE - 300) {
+                pages.push(currentPage);
+                currentPage = [];
+                currentChars = 0;
+            }
+            currentPage.push(headerBlock);
+            currentChars += headerCost;
+
+            // --- Terms Logic (with Splitting) ---
+            catTerms.forEach((term, termIndex) => {
+                let fullDesc = term.description || "";
+                fullDesc = fullDesc.replace(/\s+/g, ' ').trim();
+
+                const titlePrefix = `${catIndex + 2}.${termIndex + 1} ${term.title}: `;
+                let isFirstChunk = true;
+
+                while (fullDesc.length > 0 || isFirstChunk) {
+                    const available = CHARS_PER_PAGE - currentChars;
+
+                    // If very little space left, move to next page
+                    if (available < 300) {
+                        pages.push(currentPage);
+                        currentPage = [];
+                        currentChars = 0;
+                        continue;
+                    }
+
+                    const costPrefix = isFirstChunk ? titlePrefix.length : 0;
+                    const buffer = 10; // Minimal buffer to fill line
+                    const maxDescChars = available - costPrefix - buffer;
+
+                    if (maxDescChars <= 0) {
+                        pages.push(currentPage);
+                        currentPage = [];
+                        currentChars = 0;
+                        continue;
+                    }
+
+                    let chunk = "";
+                    let remaining = "";
+                    let isSplit = false;
+
+                    if (fullDesc.length <= maxDescChars) {
+                        chunk = fullDesc;
+                        remaining = "";
+                    } else {
+                        [chunk, remaining] = splitText(fullDesc, maxDescChars);
+                        isSplit = true;
+                    }
+
+                    const content = (
+                        <div
+                            key={`${term.id}-${isFirstChunk ? 'start' : 'cont'}-${pages.length}`}
+                            className={`${isSplit ? 'mb-0' : 'mb-3'} pl-2 text-justify leading-relaxed`}
+                        >
+                            <p>
+                                {isFirstChunk && <strong>{titlePrefix}</strong>}
+                                <span style={{ fontWeight: 'normal' }}>{chunk}</span>
+                            </p>
+                        </div>
+                    );
+
+                    currentPage.push(content);
+                    currentChars += (costPrefix + chunk.length + buffer);
+
+                    fullDesc = remaining.trim();
+                    isFirstChunk = false;
+
+                    if (!isSplit) break;
+                }
+            });
+        });
+
+        if (currentPage.length > 0) {
+            pages.push(currentPage);
+        }
+
+        setPaginatedTerms(pages);
+
+    }, [categories, terms]);
+
+    // Calculate total pages: 2 static (Cover + Summary) + Dynamic Terms Pages + Extra Pages
+    const termsPageCount = paginatedTerms.length > 0 ? paginatedTerms.length : 1; // At least 1 for the static intro if empty
+    const totalPages = 2 + termsPageCount + extraPages.length;
 
     const handlePrint = () => {
         window.print();
@@ -141,15 +286,22 @@ const TenderPreview = () => {
     const saveCurrentContent = () => {
         const newSavedContent = { ...savedContent };
 
-        // Save static pages
-        for (let i = 1; i <= staticPagesCount; i++) {
+        // Save Page 1 & 2
+        for (let i = 1; i <= 2; i++) {
             const el = document.getElementById(`page-content-${i}`);
             if (el) newSavedContent[i] = el.innerHTML;
         }
 
-        // Save extra pages
+        // Save Terms Pages
+        for (let i = 0; i < termsPageCount; i++) {
+            const pageNum = 3 + i;
+            const el = document.getElementById(`page-content-${pageNum}`);
+            if (el) newSavedContent[pageNum] = el.innerHTML;
+        }
+
+        // Save Extra Pages
         extraPages.forEach((_, idx) => {
-            const pageNum = staticPagesCount + 1 + idx;
+            const pageNum = 3 + termsPageCount + idx;
             const el = document.getElementById(`page-content-${pageNum}`);
             if (el) newSavedContent[pageNum] = el.innerHTML;
         });
@@ -192,20 +344,6 @@ const TenderPreview = () => {
             alert("Failed to save document.");
         }
     };
-
-    // Helper to group terms by category
-    const getTermsByCategory = () => {
-        const grouped = {};
-        terms.forEach(term => {
-            if (!grouped[term.categoryId]) {
-                grouped[term.categoryId] = [];
-            }
-            grouped[term.categoryId].push(term);
-        });
-        return grouped;
-    };
-
-    const groupedTerms = getTermsByCategory();
 
     if (loading) return <div className="p-8 text-center">Loading document...</div>;
     if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
@@ -267,11 +405,12 @@ const TenderPreview = () => {
 
         /* Footer Positioning */
         .page-footer {
+          position: absolute;
+          bottom: 15px;
+          right: 32px; /* Matches border-inner padding */
           text-align: right;
           font-size: 10pt;
           font-weight: 600;
-          margin-top: auto; 
-          padding-top: 10px;
         }
 
         /* --- Table Styles --- */
@@ -541,58 +680,40 @@ const TenderPreview = () => {
                 </PageLayout>
             </div>
 
-            {/* --- PAGE 3: Instructions Part 2 & Dynamic Terms --- */}
-            <div className="doc-font text-black leading-snug">
-                <PageLayout
-                    pageNumber={3}
-                    totalPages={totalPages}
-                    contentId="page-content-3"
-                    savedHtml={savedContent[3]}
-                >
-
-                    <div className="mt-4">
-                        <div className="text-justify text-md space-y-4 px-2">
-                            <p>
-                                <strong>Digital Signature:</strong> Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).
-                            </p>
-
-                            <p>
-                                <strong>Documentation:</strong> Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.
-                            </p>
+            {/* --- DYNAMIC TERMS PAGES (Page 3 onwards) --- */}
+            {paginatedTerms.length > 0 ? (
+                paginatedTerms.map((pageContent, index) => {
+                    const pageNum = 3 + index;
+                    return (
+                        <div key={`terms-page-${index}`} className="doc-font text-black leading-snug">
+                            <PageLayout
+                                pageNumber={pageNum}
+                                totalPages={totalPages}
+                                contentId={`page-content-${pageNum}`}
+                                savedHtml={savedContent[pageNum]}
+                            >
+                                {pageContent}
+                            </PageLayout>
                         </div>
-
-                        {/* DYNAMIC TERMS RENDERED HERE */}
-                        <div className="mt-8 space-y-6">
-                            {categories.map((cat, index) => {
-                                const catTerms = groupedTerms[cat.id];
-                                if (!catTerms || catTerms.length === 0) return null;
-
-                                return (
-                                    <div key={cat.id}>
-                                        <h4 className="text-md font-bold uppercase mb-2 underline">
-                                            SECTION {index + 2}: {cat.name.toUpperCase()}
-                                        </h4>
-                                        <div className="space-y-3 pl-2">
-                                            {catTerms.map((term, tIndex) => (
-                                                <div key={term.id}>
-                                                    <p>
-                                                        <strong>{index + 2}.{tIndex + 1} {term.title}:</strong> {term.description}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                    </div>
-                </PageLayout>
-            </div>
+                    );
+                })
+            ) : (
+                // Fallback if no terms (render empty Page 3)
+                <div className="doc-font text-black leading-snug">
+                    <PageLayout
+                        pageNumber={3}
+                        totalPages={totalPages}
+                        contentId="page-content-3"
+                        savedHtml={savedContent[3]}
+                    >
+                        <div className="p-4 text-center text-gray-500">No terms selected.</div>
+                    </PageLayout>
+                </div>
+            )}
 
             {/* --- EXTRA PAGES --- */}
             {extraPages.map((page, index) => {
-                const pageNum = staticPagesCount + 1 + index;
+                const pageNum = 3 + termsPageCount + index;
                 return (
                     <div key={page.id} className="doc-font text-black leading-snug">
                         <PageLayout

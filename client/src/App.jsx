@@ -92,8 +92,12 @@ function Dashboard() {
 
   // UI States
   const [isEditing, setIsEditing] = useState(false);
+  const [editingTenderId, setEditingTenderId] = useState(null); // New state for editing tender
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState(null);
+
+  // Delete Tender Modal State
+  const [tenderToDelete, setTenderToDelete] = useState(null);
 
   // --- 1. INITIAL LOAD (Fetch from MongoDB) ---
   useEffect(() => {
@@ -143,49 +147,93 @@ function Dashboard() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/tenders`, {
-        method: "POST",
+      const method = editingTenderId ? "PUT" : "POST";
+      const url = editingTenderId
+        ? `${API_URL}/tenders/${editingTenderId}`
+        : `${API_URL}/tenders`;
+
+      const response = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-        const newTender = await response.json();
-        setSavedTenders((prev) => [newTender, ...prev]);
-        setView("my-tenders");
+        const savedTender = await response.json();
 
-        // Reset Form
-        setFormData({
-          id: null,
-          tenderCategory: "service",
-          tenderType: "gem",
-          departmentName: "Department of Physics, H.P. University",
-          departmentEmail: "physicshpu@gmail.com",
-          tenderInvitingAuthority: "",
-          tenderName: "",
-          tenderNo: "",
-          itemQuantity: "",
-          estimatedCost: "",
-          bidValidity: "90",
-          emdRequired: "",
-          pbgRequired: "",
-          emdPledgeOfficer:
-            "Finance Officer, Himachal Pradesh University, Summerhill, Shimla - 171005",
-          publishDate: "",
-          isPreBidRequired: "no",
-          preBidDate: "",
-          bidStartDate: "",
-          bidEndDate: "",
-          offlineSubmissionDate: "",
-          techEvalDate: "",
-          selectedTermIds: [],
-        });
+        if (editingTenderId) {
+          setSavedTenders((prev) => prev.map(t => t.id === editingTenderId ? savedTender : t));
+        } else {
+          setSavedTenders((prev) => [savedTender, ...prev]);
+        }
+
+        setView("my-tenders");
+        resetForm();
       }
     } catch (err) {
       console.error("Save failed", err);
       alert("Failed to save to MongoDB. Is server.js running?");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setEditingTenderId(null);
+    setFormData({
+      id: null,
+      tenderCategory: "service",
+      tenderType: "gem",
+      departmentName: "Department of Physics, H.P. University",
+      departmentEmail: "physicshpu@gmail.com",
+      tenderInvitingAuthority: "",
+      tenderName: "",
+      tenderNo: "",
+      itemQuantity: "",
+      estimatedCost: "",
+      bidValidity: "90",
+      emdRequired: "",
+      pbgRequired: "",
+      emdPledgeOfficer:
+        "Finance Officer, Himachal Pradesh University, Summerhill, Shimla - 171005",
+      publishDate: "",
+      isPreBidRequired: "no",
+      preBidDate: "",
+      bidStartDate: "",
+      bidEndDate: "",
+      offlineSubmissionDate: "",
+      techEvalDate: "",
+      selectedTermIds: [],
+    });
+  };
+
+  const editTender = (tender) => {
+    setEditingTenderId(tender.id);
+    setFormData({
+      ...tender,
+      // Ensure dates are formatted correctly for input fields if needed, 
+      // but for now passing as is usually works if inputs are text/date
+    });
+    setView("form");
+  };
+
+  const deleteTender = (tenderId) => {
+    setTenderToDelete(tenderId);
+  };
+
+  const confirmDeleteTender = async () => {
+    if (!tenderToDelete) return;
+    try {
+      const response = await fetch(`${API_URL}/tenders/${tenderToDelete}`, { method: "DELETE" });
+      if (response.ok) {
+        setSavedTenders(prev => prev.filter(t => t.id !== tenderToDelete));
+        setTenderToDelete(null);
+      } else {
+        alert("Failed to delete tender");
+      }
+    } catch (err) {
+      console.error("Error deleting tender:", err);
+      alert("Error deleting tender");
     }
   };
 
@@ -440,12 +488,23 @@ function Dashboard() {
             <div className="flex justify-between items-end mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">
-                  New Tender Entry
+                  {editingTenderId ? "Edit Tender" : "New Tender Entry"}
                 </h1>
                 <p className="text-slate-500 text-sm mt-1">
-                  Step 1: Fill details & Map T&Cs.
+                  {editingTenderId ? "Update tender details & T&Cs." : "Step 1: Fill details & Map T&Cs."}
                 </p>
               </div>
+              {editingTenderId && (
+                <button
+                  onClick={() => {
+                    resetForm();
+                    setView("my-tenders");
+                  }}
+                  className="text-slate-500 hover:text-slate-800 flex items-center gap-1 text-sm font-medium bg-slate-100 px-3 py-2 rounded-lg transition-colors"
+                >
+                  <X className="w-4 h-4" /> Cancel Edit
+                </button>
+              )}
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -847,7 +906,10 @@ function Dashboard() {
                   Create your first tender document to get started.
                 </p>
                 <button
-                  onClick={() => setView("form")}
+                  onClick={() => {
+                    resetForm();
+                    setView("form");
+                  }}
                   className="text-blue-600 font-medium hover:underline"
                 >
                   Create New Tender
@@ -858,8 +920,32 @@ function Dashboard() {
                 {savedTenders.map((tender) => (
                   <div
                     key={tender.id}
-                    className="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow p-6 group"
+                    className="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow p-6 group relative"
                   >
+                    {/* Action Buttons (Top Right) */}
+                    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          editTender(tender);
+                        }}
+                        className="p-1.5 bg-white text-slate-400 hover:text-blue-600 border border-slate-200 rounded-lg shadow-sm hover:shadow transition-all"
+                        title="Edit Tender"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteTender(tender.id);
+                        }}
+                        className="p-1.5 bg-white text-slate-400 hover:text-red-600 border border-slate-200 rounded-lg shadow-sm hover:shadow transition-all"
+                        title="Delete Tender"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
                     <div className="flex justify-between items-start mb-4">
                       <div className="bg-blue-50 p-2 rounded-lg">
                         <FileText className="w-6 h-6 text-blue-600" />
@@ -895,6 +981,39 @@ function Dashboard() {
                 ))}
               </div>
             )}
+
+            {/* Delete Tender Confirmation Modal */}
+            {tenderToDelete && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all scale-100">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                      <AlertCircle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      Delete Tender?
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6">
+                      Are you sure you want to delete this tender? This action cannot be undone and all saved versions will be lost.
+                    </p>
+                    <div className="flex gap-3 w-full">
+                      <button
+                        onClick={() => setTenderToDelete(null)}
+                        className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={confirmDeleteTender}
+                        className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -909,7 +1028,7 @@ function Dashboard() {
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
               <div className="p-6 md:p-8 border-b border-slate-100">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start mb-6">
                   <div>
                     <h1 className="text-2xl font-bold text-slate-900 mb-2">
                       {activeTender.tenderName}
@@ -932,6 +1051,131 @@ function Dashboard() {
                     Generate Document
                   </button>
                 </div>
+
+                {/* --- DETAILED INFO GRID --- */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                  {/* Department Details */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Department Details
+                    </h3>
+                    <div className="bg-slate-50 rounded-lg p-4 space-y-3 border border-slate-100">
+                      <div>
+                        <span className="text-xs text-slate-500 block">Department Name</span>
+                        <span className="text-sm font-medium text-slate-800">{activeTender.departmentName}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 block">Email</span>
+                        <span className="text-sm font-medium text-slate-800">{activeTender.departmentEmail}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 block">Inviting Authority</span>
+                        <span className="text-sm font-medium text-slate-800">{activeTender.tenderInvitingAuthority}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Financials */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Financials
+                    </h3>
+                    <div className="bg-slate-50 rounded-lg p-4 space-y-3 border border-slate-100">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-slate-500 block">Estimated Cost</span>
+                          <span className="text-sm font-medium text-slate-800">₹{activeTender.estimatedCost}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 block">Bid Validity</span>
+                          <span className="text-sm font-medium text-slate-800">{activeTender.bidValidity} Days</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-slate-500 block">EMD</span>
+                          <span className="text-sm font-medium text-slate-800">{activeTender.emdRequired}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 block">PBG</span>
+                          <span className="text-sm font-medium text-slate-800">{activeTender.pbgRequired}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 block">Pledge Officer</span>
+                        <span className="text-sm font-medium text-slate-800">{activeTender.emdPledgeOfficer}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dates */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Important Dates
+                    </h3>
+                    <div className="bg-slate-50 rounded-lg p-4 space-y-3 border border-slate-100">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-slate-500 block">Bid Start</span>
+                          <span className="text-sm font-medium text-slate-800">{formatDateDisplay(activeTender.bidStartDate)}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 block">Bid End</span>
+                          <span className="text-sm font-medium text-slate-800">{formatDateDisplay(activeTender.bidEndDate)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Classification & Quantity */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Other Details
+                    </h3>
+                    <div className="bg-slate-50 rounded-lg p-4 space-y-3 border border-slate-100">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-slate-500 block">Category</span>
+                          <span className="text-sm font-medium text-slate-800 capitalize">{activeTender.tenderCategory}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 block">Type</span>
+                          <span className="text-sm font-medium text-slate-800 uppercase">{activeTender.tenderType}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 block">Item Quantity</span>
+                        <span className="text-sm font-medium text-slate-800">{activeTender.itemQuantity}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Selected Terms */}
+                <div className="mt-8">
+                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                    Selected Terms & Conditions
+                  </h3>
+                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                    {activeTender.selectedTermIds && activeTender.selectedTermIds.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {terms
+                          .filter(t => activeTender.selectedTermIds.includes(t.id))
+                          .map(term => (
+                            <span key={term.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {term.title}
+                            </span>
+                          ))
+                        }
+                      </div>
+                    ) : (
+                      <p className="text-sm text-slate-500 italic">No terms selected.</p>
+                    )}
+                  </div>
+                </div>
+
               </div>
 
               <div className="p-6 md:p-8 bg-slate-50/50">
