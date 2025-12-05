@@ -67,6 +67,10 @@ const TenderSchema = new mongoose.Schema({
 const Tender = mongoose.model("Tender", TenderSchema);
 
 // --- ROUTES ---
+app.get("/", (req, res) => {
+  res.send("Welcome to the Tender App API! The frontend is served separately.");
+});
+
 app.get("/api/dashboard-data", async (req, res) => {
   try {
     const categories = await Category.find();

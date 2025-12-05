@@ -141,7 +141,7 @@ const TenderPreview = () => {
     useEffect(() => {
         if (categories.length === 0 || terms.length === 0) return;
 
-        const CHARS_PER_PAGE = 2500;
+        const CHARS_PER_PAGE = 2200;
         const pages = [];
         let currentPage = [];
         let currentChars = 0;
@@ -155,21 +155,24 @@ const TenderPreview = () => {
             return [text.substring(0, splitIndex), text.substring(splitIndex)];
         };
 
-        // --- Static Intro for the First Terms Page ---
+        // --- Static Intro for the First Terms Page (Section 2) ---
         const staticIntro = (
             <div key="static-intro" className="mt-4 mb-8">
+                <h4 className="text-lg font-bold uppercase mb-4 mt-6">
+                    SECTION 2: GENERAL REQUIREMENTS
+                </h4>
                 <div className="text-justify text-md space-y-4 px-2 leading-relaxed">
                     <p>
-                        <strong>Digital Signature:</strong> <span style={{ fontWeight: 'normal' }}>Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).</span>
+                        <strong>2.1 Digital Signature:</strong> <span style={{ fontWeight: 'normal' }}>Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).</span>
                     </p>
                     <p>
-                        <strong>Documentation:</strong> <span style={{ fontWeight: 'normal' }}>Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.</span>
+                        <strong>2.2 Documentation:</strong> <span style={{ fontWeight: 'normal' }}>Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.</span>
                     </p>
                 </div>
             </div>
         );
         currentPage.push(staticIntro);
-        currentChars += 600;
+        currentChars += 800; // Increased cost for header + content
 
         // --- Group and Paginate Terms ---
         const grouped = getTermsByCategory();
@@ -181,13 +184,13 @@ const TenderPreview = () => {
             // --- Category Header Logic ---
             const headerBlock = (
                 <h4 key={`cat-${cat.id}`} className="text-lg font-bold uppercase mb-4 mt-6">
-                    SECTION {catIndex + 2}: {cat.name.toUpperCase()}
+                    SECTION {catIndex + 3}: {cat.name.toUpperCase()}
                 </h4>
             );
             const headerCost = 150;
 
-            // Orphan Control
-            if (currentChars > CHARS_PER_PAGE - 300) {
+            // Orphan Control: Ensure enough space for Header + Minimum Content (e.g. 300 chars)
+            if (currentChars > CHARS_PER_PAGE - 600) {
                 pages.push(currentPage);
                 currentPage = [];
                 currentChars = 0;
@@ -200,14 +203,14 @@ const TenderPreview = () => {
                 let fullDesc = term.description || "";
                 fullDesc = fullDesc.replace(/\s+/g, ' ').trim();
 
-                const titlePrefix = `${catIndex + 2}.${termIndex + 1} ${term.title}: `;
+                const titlePrefix = `${catIndex + 3}.${termIndex + 1} ${term.title}: `;
                 let isFirstChunk = true;
 
                 while (fullDesc.length > 0 || isFirstChunk) {
                     const available = CHARS_PER_PAGE - currentChars;
 
                     // If very little space left, move to next page
-                    if (available < 300) {
+                    if (available < 150) {
                         pages.push(currentPage);
                         currentPage = [];
                         currentChars = 0;
@@ -223,6 +226,17 @@ const TenderPreview = () => {
                         currentPage = [];
                         currentChars = 0;
                         continue;
+                    }
+
+                    // Anti-Runt Logic: If splitting would leave a tiny chunk (< 100 chars) on the next page,
+                    // and we are not at the start of a page, push the whole thing to the next page.
+                    if (fullDesc.length > maxDescChars && (fullDesc.length - maxDescChars) < 100) {
+                        if (currentChars > 500) {
+                            pages.push(currentPage);
+                            currentPage = [];
+                            currentChars = 0;
+                            continue;
+                        }
                     }
 
                     let chunk = "";
@@ -603,58 +617,24 @@ const TenderPreview = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1.</td>
-                                    <td>Item Description</td>
-                                    <td>{data.tender_title}</td>
-                                </tr>
-                                <tr>
-                                    <td>2.</td>
-                                    <td>Quantity</td>
-                                    <td>{data.quantity}</td>
-                                </tr>
-                                <tr>
-                                    <td>3.</td>
-                                    <td>Department</td>
-                                    <td>{data.name_of_department}</td>
-                                </tr>
-                                <tr>
-                                    <td>4.</td>
-                                    <td>Bid Start Date & Time</td>
-                                    <td>[as mentioned in Gem Bid Document]</td>
-                                </tr>
-                                <tr>
-                                    <td>5.</td>
-                                    <td>Bid End Date & Time</td>
-                                    <td>[as mentioned in Gem Bid Document]</td>
-                                </tr>
-                                <tr>
-                                    <td>6.</td>
-                                    <td>Pre-Bid Meeting</td>
-                                    <td>[as mentioned in Gem Bid Document]</td>
-                                </tr>
-                                <tr>
-                                    <td>7.</td>
-                                    <td>Earnest Money Deposit (EMD)</td>
-                                    <td>{data.emd_value}</td>
-                                </tr>
-                                <tr>
-                                    <td>8.</td>
-                                    <td>Performance Security</td>
-                                    <td>{data.pbg_value}</td>
-                                </tr>
-                                <tr>
-                                    <td>9.</td>
-                                    <td>Pledge of EMD / PBG</td>
-                                    <td>
-                                        EMD and Performance Bank Guarantee (PBG) must be pledged only in the name of: <strong>{data.emd_officer}</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>10.</td>
-                                    <td>Bid Validity</td>
-                                    <td>{data.bid_validity} days from the date of publication of bid.</td>
-                                </tr>
+                                {[
+                                    { label: "Item Description", value: data.tender_title },
+                                    { label: "Quantity", value: data.quantity },
+                                    { label: "Department", value: data.name_of_department },
+                                    { label: "Bid Start Date & Time", value: "[as mentioned in Gem Bid Document]" },
+                                    { label: "Bid End Date & Time", value: "[as mentioned in Gem Bid Document]" },
+                                    { label: "Pre-Bid Meeting", value: "[as mentioned in Gem Bid Document]" },
+                                    { label: "Earnest Money Deposit (EMD)", value: data.emd_value },
+                                    { label: "Performance Security", value: data.pbg_value },
+                                    { label: "Pledge of EMD / PBG", value: <>EMD and Performance Bank Guarantee (PBG) must be pledged only in the name of: <strong>{data.emd_officer}</strong></> },
+                                    { label: "Bid Validity", value: `${data.bid_validity} days from the date of publication of bid.` }
+                                ].map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{index + 1}.</td>
+                                        <td>{item.label}</td>
+                                        <td>{item.value}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
 
@@ -665,15 +645,15 @@ const TenderPreview = () => {
 
                     {/* SECTION I: INSTRUCTIONS FOR BIDDERS (Hardcoded + Dynamic) */}
                     <div className="mt-8">
-                        <h3 className="text-lg font-bold uppercase underline mb-4 text-center">SECTION I: INSTRUCTIONS FOR BIDDERS</h3>
+                        <h3 className="text-lg font-bold uppercase underline mb-4 text-center">SECTION 1: INSTRUCTIONS FOR BIDDERS</h3>
 
                         <div className="text-justify text-md space-y-4 px-2">
                             <p>
-                                <strong>Bid Submission:</strong> Bidders must be registered on the Government e-Marketplace (GeM) portal. All bids, including technical and financial components, must be submitted exclusively online through the GeM portal (gem.gov.in) before the specified deadline. Physical or offline bids will not be accepted.
+                                <strong>1.1 Bid Submission:</strong> Bidders must be registered on the Government e-Marketplace (GeM) portal. All bids, including technical and financial components, must be submitted exclusively online through the GeM portal (gem.gov.in) before the specified deadline. Physical or offline bids will not be accepted.
                             </p>
 
                             <p>
-                                <strong>Governing Terms:</strong> This bid process will be governed by the General Terms and Conditions (GTC) of GeM in addition to the Additional Terms and Conditions (ATC) specified in this document. In case of any conflict, the terms specified in this document will prevail.
+                                <strong>1.2 Governing Terms:</strong> This bid process will be governed by the General Terms and Conditions (GTC) of GeM in addition to the Additional Terms and Conditions (ATC) specified in this document. In case of any conflict, the terms specified in this document will prevail.
                             </p>
                         </div>
                     </div>
