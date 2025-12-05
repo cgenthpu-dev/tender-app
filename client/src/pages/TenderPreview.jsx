@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Printer, Edit, Check, Plus, Save } from 'lucide-react';
+import RichTextEditor from '../components/RichTextEditor';
 
 // Reusable Layout Component for the Triple Border & Pagination
-const PageLayout = ({ children, pageNumber, totalPages, contentId, savedHtml }) => (
+const PageLayout = ({ children, pageNumber, totalPages, contentId, savedHtml, isEditable, onContentChange }) => (
     <div className="a4-page">
         {/* 1. Outer Line (1px) */}
         <div className="border-outer">
@@ -14,16 +15,25 @@ const PageLayout = ({ children, pageNumber, totalPages, contentId, savedHtml }) 
                 <div className="border-inner">
 
                     {/* Page Content */}
-                    {savedHtml !== undefined ? (
-                        <div
-                            id={contentId}
-                            className="page-content"
-                            dangerouslySetInnerHTML={{ __html: savedHtml }}
-                        />
-                    ) : (
-                        <div id={contentId} className="page-content">
-                            {children}
+                    {isEditable ? (
+                        <div className="h-full -mx-4 -my-2"> {/* Negative margin to fit editor nicely */}
+                            <RichTextEditor
+                                initialValue={savedHtml || ""}
+                                onChange={(content) => onContentChange(pageNumber, content)}
+                            />
                         </div>
+                    ) : (
+                        savedHtml !== undefined ? (
+                            <div
+                                id={contentId}
+                                className="page-content"
+                                dangerouslySetInnerHTML={{ __html: savedHtml }}
+                            />
+                        ) : (
+                            <div id={contentId} className="page-content">
+                                {children}
+                            </div>
+                        )
                     )}
 
                     {/* Pagination Footer */}
@@ -290,12 +300,6 @@ const TenderPreview = () => {
         window.print();
     };
 
-    const toggleEditMode = () => {
-        const newMode = !isEditable;
-        setIsEditable(newMode);
-        document.designMode = newMode ? 'on' : 'off';
-    };
-
     // Save current DOM content to state to prevent loss on re-render
     const saveCurrentContent = () => {
         const newSavedContent = { ...savedContent };
@@ -323,9 +327,28 @@ const TenderPreview = () => {
         return newSavedContent;
     };
 
+    const toggleEditMode = () => {
+        if (!isEditable) {
+            // Entering Edit Mode: Save current DOM content first
+            const current = saveCurrentContent();
+            setSavedContent(current);
+        }
+        setIsEditable(!isEditable);
+    };
+
+    const handleContentChange = (pageNum, content) => {
+        setSavedContent(prev => ({
+            ...prev,
+            [pageNum]: content
+        }));
+    };
+
     const handleAddPage = () => {
-        const currentContent = saveCurrentContent();
-        setSavedContent(currentContent);
+        // If adding page while in edit mode, we don't need to saveCurrentContent from DOM,
+        // because savedContent is being updated live via handleContentChange.
+        // But if we are NOT in edit mode (though button is only visible in edit mode?),
+        // actually button is visible if isEditable is true.
+        // So we just add a page.
         setExtraPages([...extraPages, { id: Date.now() }]);
     };
 
@@ -338,9 +361,13 @@ const TenderPreview = () => {
         e.preventDefault();
         if (!saveName.trim()) return;
 
-        const currentContent = saveCurrentContent();
-        // Update state locally first
-        setSavedContent(currentContent);
+        // If in edit mode, savedContent is already up to date via onChange.
+        // If not in edit mode, we need to scrape DOM.
+        let currentContent = savedContent;
+        if (!isEditable) {
+            currentContent = saveCurrentContent();
+            setSavedContent(currentContent);
+        }
 
         try {
             const payload = {
@@ -561,6 +588,8 @@ const TenderPreview = () => {
                     totalPages={totalPages}
                     contentId="page-content-1"
                     savedHtml={savedContent[1]}
+                    isEditable={isEditable}
+                    onContentChange={handleContentChange}
                 >
                     <div className="h-full flex flex-col pt-16">
 
@@ -602,6 +631,8 @@ const TenderPreview = () => {
                     totalPages={totalPages}
                     contentId="page-content-2"
                     savedHtml={savedContent[2]}
+                    isEditable={isEditable}
+                    onContentChange={handleContentChange}
                 >
 
                     {/* SUMMARY Section */}
@@ -671,6 +702,8 @@ const TenderPreview = () => {
                                 totalPages={totalPages}
                                 contentId={`page-content-${pageNum}`}
                                 savedHtml={savedContent[pageNum]}
+                                isEditable={isEditable}
+                                onContentChange={handleContentChange}
                             >
                                 {pageContent}
                             </PageLayout>
@@ -685,6 +718,8 @@ const TenderPreview = () => {
                         totalPages={totalPages}
                         contentId="page-content-3"
                         savedHtml={savedContent[3]}
+                        isEditable={isEditable}
+                        onContentChange={handleContentChange}
                     >
                         <div className="p-4 text-center text-gray-500">No terms selected.</div>
                     </PageLayout>
@@ -701,6 +736,8 @@ const TenderPreview = () => {
                             totalPages={totalPages}
                             contentId={`page-content-${pageNum}`}
                             savedHtml={savedContent[pageNum]}
+                            isEditable={isEditable}
+                            onContentChange={handleContentChange}
                         >
                             <div className="h-full p-4">
                                 <h3 className="text-lg font-bold mb-4">New Page {pageNum}</h3>
