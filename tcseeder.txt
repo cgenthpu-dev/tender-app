@@ -1,0 +1,121 @@
+Unified General Terms and Conditions
+
+Category: Instructions for Bidders
+  1.1 Bid Submission: Bidders must be registered on the Government e-Marketplace (GeM) portal. All bids, including technical and financial components, must be submitted exclusively online through the GeM portal (gem.gov.in) before the specified deadline. Physical or offline bids will not be accepted.
+  1.2 Governing Terms: This bid process will be governed by the General Terms and Conditions (GTC) of GeM in addition to the Additional Terms and Conditions (ATC) specified in this document. In case of any conflict, the terms specified in this document will prevail.
+  1.3 Digital Signature: Bids must be digitally signed by an authorized representative of the bidding firm using a valid Class-II or Class-III Digital Signature Certificate (DSC).
+  1.4 Documentation: Bidders are required to upload scanned copies of all necessary documents as specified in this bid document. All uploaded documents must be clear, legible, and duly signed and stamped by the authorized signatory.
+
+Category: General Conditions
+  2.1 Scope of Work: The scope shall include Supply, Installation, Commissioning, & Satisfactory Demonstration of {{scope_of_work}}. This will also include testing, packing, transportation, transit insurance, delivery at the site, unloading, and any other services associated with the delivery of the equipment. The successful bidder will assume full responsibility for the complete system until final acceptance.
+  2.2 No Gratification Clause: The bidder must provide an undertaking that they will not attempt to gratify any person or use any unfair means to influence the purchase process. Any such action will debar the company from participating in this and future tenders, and suitable action will be initiated.
+  2.3 No Cartel Formation: Bidders shall not form a cartel or submit supporting quotations for other companies. Evidence of such practices will lead to disqualification.
+  2.4 Purchaser's Right to Vary Quantities: The Purchaser reserves the right to increase or decrease the quantity to be ordered at the time of placement of the contract. The purchaser also reserves the right to place a repeat order during the currency of the contract at the contracted rates. Bidders are bound to accept the orders accordingly.
+  2.5 Purchaser’s Right to Accept or Reject Bids: The Purchaser reserves the right to accept or reject any bid, and to annul the bidding process and reject all bids at any time prior to the award of contract, without thereby incurring any liability to the affected bidder(s).
+  2.6 Patents, Copyrights, and Indemnification: The successful bidder shall protect and fully indemnify the Purchaser from any claims for infringement of patents, copyright, trademark, or the like. The successful bidder shall also be responsible for compliance with all legal requirements and shall indemnify the Purchaser from any claims or penalties arising out of any infringements.
+  2.7 Restrictions on Procurement: Any bidder from country which shares a land border with India will be eligible to bid in this procurement process if the bidder is registered with competent authority constituted by Department for promotion of industry and internal trade (DPIIT) or any other body as created by Govt. of India/Ministry of Finance, Department of Expenditure, Public Procurement Division New Delhi.
+
+Category: Eligibility Criteria
+  3.1 Bidder Status: The bidder shall be an OEM Manufacturer, Direct Importer, or Authorized Dealer/Distributor of the OEM. Authorized Dealers/Distributors must submit a current, bid-specific Manufacturer’s Authorization Form (MAF).
+  3.2 Experience: The bidder must have a minimum of {{experience_years}} years’ experience in India in supply, installation, and commissioning of similar scientific test and measurement equipment. Supporting documents shall include Purchase Orders and corresponding Consignee Receipt and Acceptance Certificates (CRACs) for last three financial years i.e. {{financial_years}}.
+  3.3 Past Performance: The Bidder or its OEM should have supplied same or similar Category Products for {{past_performance_percentage}}% of bid quantity, in at least one of the last three financial years before the bid opening date to any Central / State Govt Organization / PSU. Copies of relevant contracts (proving supply of cumulative order quantity in any one financial year) to be submitted along with bid in support of quantity supplied in the relevant financial year.
+  3.4 Financial Capacity: The bidder must have a minimum average annual turnover of {{min_turnover}} over the last three financial years. The turnover must be certified by a Chartered Accountant, and supported by audited financial statements for the respective years.
+  3.5 Income Tax Returns: The bidder shall submit Income Tax Returns (ITRs) statement for the financial years {{financial_years}}.
+  3.6 Tax and Registration Compliance: The bidder must hold valid PAN and GST Registration, and be registered on the GeM portal.
+  3.7 Blacklisting Declaration: A notarized self-declaration on non-judicial stamp paper must be submitted, confirming that the firm has not been blacklisted/debarred by any Central/State Government Department, PSU, or Government organization.
+  3.8 Land-Border Compliance: Compliance with Government of India restrictions, on procurement from bidders of countries sharing land borders with India must be declared. Certificate to be submitted as per applicable format.
+
+Category: Earnest Money Deposit (EMD)
+  4.1 EMD Requirement: The bidder shall submit an Earnest Money Deposit (EMD) of {{emd_amount}} ({{emd_amount_words}}) along with the bid. The EMD shall be submitted in any of the following forms: Fixed Deposit Receipt (FDR) from a nationalized bank, duly pledged in the name of {{emd_pledge_officer}}; OR Bank Guarantee (BG) from a nationalized bank, drawn in favor of {{emd_pledge_officer}}.
+  4.2 Submission of Original EMD Instrument: The original EMD instrument (FDR or BG) must be physically submitted to the office of {{submission_officer}}, {{department_address}}, before or within {{emd_submission_days}} working days after the last date of bid submission on the GeM portal. The envelope must be clearly labelled with the bid reference number, bidder name, and contact details.
+  4.3 Refund of EMD: EMD of unsuccessful bidders shall be refunded after finalization of the tender and within 30 days from the award of contract to the successful bidder. EMD of the successful bidder shall be refunded upon submission of Performance Security and execution of the contract agreement. No claim for interest on EMD shall be entertained under any circumstances.
+  4.4 Forfeiture of EMD: The EMD shall be liable to forfeiture under the following conditions: If the bidder withdraws or modifies the bid during the bid validity period; If the successful bidder fails to sign the contract or submit the required Performance Security within the stipulated time; If any document submitted is found to be false or misleading.
+  4.5 Bid Rejection: Bids submitted without valid EMD shall be summarily rejected.
+
+Category: Performance Security
+  5.1 Requirement: The successful bidder shall be required to furnish a Performance Bank Guarantee (PBG) i.e. {{pbg_percentage}}% of the total contract value. This guarantee shall be submitted within {{pbg_submission_days}} days from the date of the issuance of the Letter of Intent (LOI)/award of contract.
+  5.2 Form of Guarantee: The PBG shall be in the form of an unconditional and irrevocable FDR or bank guarantee issued by a Nationalized Bank in favour of {{emd_pledge_officer}}. The PBG shall remain valid for a period of at least {{pbg_validity_period}} months beyond the completion of the contract period and or warranty period.
+  5.3 Purpose: The PBG shall serve as security for the due performance of the contract and shall cover any failure or default in the execution of the contract by the successful bidder.
+  5.4 Forfeiture: In the event of any breach of contract, failure to perform the obligations as per the terms of the contract, or failure to deliver the services/materials within the stipulated time frame, the PBG shall be forfeited in part or in full, as determined by Himachal Pradesh University.
+  5.5 Release of Guarantee: The PBG shall be released after the successful completion of the contract and upon submission of a written request by the contractor, along with a certificate of satisfactory performance from the Chairperson, Department of Physics, Himachal Pradesh University.
+  5.6 Non-Compliance: Failure to submit the PBG within the stipulated time by the L1 bidder shall result in the cancellation of the contract and forfeiture of the Earnest Money Deposit (EMD).
+
+Category: Technical Specifications
+  6.1 Technical Specifications: The detailed technical specifications of the {{scope_of_work}} are provided in {{annexure_ref}}. The specifications mentioned in this document will prevail over the specification mentioned in gem bid document in case of any conflict. Bidder are advised to go review these specification carefully before submitting their bid online.
+
+Category: Bid Evaluation
+  7.1 Evaluation Process: Bids will be evaluated by a Technical Evaluation Committee. The committee will first examine the technical bids to determine if they are complete, responsive, and conform to all terms, conditions, and specifications.
+  7.2 Responsive Bid: A substantially responsive bid is one that conforms to all conditions without material deviations or reservations. The committee may waive any minor non-conformity or irregularity that does not constitute a material deviation.
+  7.3 Financial Bid Opening: Bidders who qualify the technical evaluation will be considered for the financial bid opening.
+  7.4 Award Criteria: The contract will be awarded to the bidder who is technically qualified and quotes the lowest price (L1) as per GeM evaluation rules.
+
+Category: Signing of Contract
+  8.1 Agreement: The successful bidder shall be required to execute an agreement on a non-judicial stamp paper of Rs. {{stamp_paper_value}} with the University within {{contract_signing_days}} days of the issue of the purchase order. This agreement will formalize the terms and conditions of the contract. Failure to do so may result in the annulment of the award and forfeiture of the EMD.
+
+Category: Prices
+  9.1 Currency: Prices must be quoted in Indian Rupees (INR) only, on the GeM portal.
+  9.2 All-Inclusive: The quoted price must be all-inclusive (FOR destination) and cover all costs such as basic price, packing, forwarding, freight, transit insurance, all applicable taxes (GST), duties, handling, loading/unloading, and any other charges for delivery and installation at the Department of Physics, HPU, Shimla.
+  9.3 No Price Variation: No price variation, escalation, or additional claims on account of market fluctuations will be permitted after the submission of the bid.
+
+Category: Delivery, Installation, and Commissioning
+  10.1 Timeline: The equipment must be delivered, installed, tested, and commissioned within {{delivery_days}} days from the date of issue of the supply order.
+  10.2 Late Delivery/Installation Penalty: A penalty of {{penalty_rate}}% of the total contract value per week of delay will be imposed for delays in delivery/installation, up to a maximum of {{max_penalty}}% of the contract value.
+  10.3 Failure to Deliver: If the delay exceeds the period for which the maximum penalty is applicable ({{max_delay_weeks}} weeks), the University reserves the right to cancel the purchase order, forfeit the Performance Security, and blacklist the firm.
+  10.4 Training: The supplier shall be responsible for providing comprehensive training on the operation, maintenance, and basic troubleshooting of the equipment to faculty/staff at no extra cost.
+  10.5 Site Preparation: The Purchaser shall provide the site for installation as per the environmental and electrical specifications prescribed by the supplier. It is the supplier's responsibility to provide these site requirements in advance.
+
+Category: Inspection and Tests
+  11.1 Inspection Rights: The Purchaser or its representative shall have the right to inspect and/or test the equipment to confirm its conformity to the contract specifications at no extra cost to the Purchaser. The Purchaser may also opt for a Third-Party Inspection (TPI) at its own discretion.
+  11.2 Rejection: On Inspection, should any inspected or tested equipment fail to conform to the specifications, the Purchaser may reject the equipment, and the supplier shall either replace the rejected equipment or make necessary alterations to meet specification requirements free of cost.
+  11.3 Final Acceptance: For the purpose of taking over the equipment, a final acceptance test shall be carried out at the Purchaser's site. Only the equipment that meets all acceptance test criteria shall be accepted.
+
+Category: Technical Documentation and Manuals
+  12.1 Manuals: The bidder shall supply one complete set of technical documentation with the equipment, which must include detailed Operations, Installation, and Maintenance manuals in English. The manuals should be comprehensive enough to provide clear guidance to maintenance personnel.
+
+Category: Warranty
+  13.1 Warranty Period: The equipment, including all parts and accessories, must be covered under a comprehensive on-site warranty for a minimum period of {{warranty_years}} years from the date of successful installation and commissioning.
+  13.2 Warranty Charges: Warranty charges shall not be quoted separately; they must be included in the price of the equipment. Offers with separate warranty charges will be summarily rejected.
+  13.3 Replacement: If the performance of the equipment is not satisfactory during the warranty period, it shall be replaced by the supplier free of cost. The warranty period for the replaced parts/equipment shall be extended for a period equal to the downtime.
+
+Category: Technical Assistance and Maintenance (After-Sales Service)
+  14.1 Service Level: During the warranty period, the bidder must provide technical assistance/maintenance for the product within {{response_time_hours}} hours of a ticket being raised by the department. The firm must provide an uptime guarantee of {{uptime_guarantee}}%.
+  14.2 Penalty for Delay: Failure to provide service within the stipulated time will attract a penalty of {{service_penalty_1}} per day upto first week, and {{service_penalty_2}} per day thereafter.
+  14.3 Deduction: This penalty amount will be deducted from the Performance Security deposited by the bidder.
+  14.4 Blacklisting: If a bidder fails to provide maintenance service for a continuous period of {{max_service_delay_days}} days, the Performance Bank Guarantee (PBG) will be forfeited, and the firm will be blacklisted from participating in future tenders of the University.
+  14.5 Support Infrastructure: Bidders shall furnish details of their back-up engineering and system support infrastructure available in India.
+
+Category: Spare Parts Availability
+  15.1 Spare Parts: The bidder must provide a self-declaration/undertaking that it will provide/keep spare parts for the product for at least {{spare_parts_years}} years after the completion of the warranty period.
+
+Category: Packing and Marking
+  16.1 Packing Standards: All packing must be strong enough to withstand rough handling during transit. Fragile articles must be packed with special precautions and shall bear markings like 'FRAGILE', 'HANDLE WITH CARE', and 'THIS SIDE UP'.
+  16.2 Protection: All delicate surfaces of the equipment shall be carefully protected with appropriate materials to prevent rusting and damage. The supplier shall be liable for any damage attributable to defective or insufficient packing.
+
+Category: Substitution and Change of Model
+  17.1 Unauthorized Substitution: Unauthorized substitution or materials delivered that do not comply with the specified description or quality shall be taken back by the supplier at their own cost and risk.
+  17.2 Change of Model: No change of model after the placement of the order shall be entertained unless the alternate model offered is equivalent or higher in specifications and written approval has been obtained from the Purchaser prior to delivery.
+
+Category: Payment Terms
+  18.1 Payment: 100% payment will be released after successful delivery, installation, commissioning, and acceptance of the equipment by the designated committee.
+
+Category: Price Fall Clause
+  19.1 Undertaking: The bidder undertakes that they have not supplied/are not supplying an identical article/equipment to any other government organization, department, or PSU in India at a price lower than the price quoted in the present bid.
+  19.2 Price Reduction: If during the contract period, the bidder reduces the sale price or sells the same article/equipment to any other entity at a price lower than the one agreed upon in this contract, the price payable for the equipment under this contract will be automatically reduced to match the lower price. The supplier must furnish a certificate to this effect with each bill.
+
+Category: Termination of Contract
+  20.1 Termination for Default: The purchaser may, without prejudice to any other remedy for breach of contract, terminate the contract in whole or in part if the supplier fails to deliver or install the system within the specified time period or fails to perform any other obligation(s) under the contract.
+  20.2 Termination for Insolvency: The purchaser may terminate the contract at any time if the supplier becomes bankrupt or otherwise insolvent.
+
+Category: Force Majeure
+  21.1 Force Majeure: Neither party shall be held responsible for any failure or delay in performance of their obligations if such failure or delay arises from an act of God (fire, flood, earthquake), civil strikes, government regulations, riots, or any other reason beyond the supplier's control, provided that notice of such an event is given to the other party within two weeks of its occurrence.
+
+Category: Arbitration and Jurisdiction
+  22.1 Arbitration: Any disputes arising out of this contract shall be subjected to the sole arbitration of the {{arbitrator_authority}}, whose decision shall be final and binding on both parties.
+  22.2 Jurisdiction: The Courts at {{court_jurisdiction}}, shall have exclusive jurisdiction to try any matter, dispute, or reference arising out of this contract.
+
+Category: Right of Acceptance
+  23.1 University’s Right to Accept or Reject Bids: Himachal Pradesh University (HPU) reserves the absolute right to accept or reject any bid, even the lowest quoted bid (L1), without assigning any reason. The university also holds the right to cancel the bidding process entirely if deemed necessary.
+  23.2 No Obligation to Award: Submission of a bid does not guarantee contract award. HPU is not bound to accept the lowest bid or any bid that does not meet its evaluation standards.
+  23.3 Rejection of Incomplete or Non-Compliant Bids: Any bid that fails to comply with tender conditions, eligibility requirements, or submission guidelines may be rejected. Bids containing incomplete documentation, false information, or conditional offers will not be considered.
+  23.4 Discretion of University Authorities: The decision of HPU’s procurement committee and competent authority shall be final and binding regarding bid selection and rejection. HPU reserves the right to negotiate prices through RA (Reverse Auction), if required, modify contract conditions, or seek clarifications before awarding the tender.
+  23.5 Contract Cancellation or Re-tendering: If it is found that the lowest bidder’s rates are unreasonable, inflated, or non-compliant, HPU may choose to reject the bid and call for a fresh tender process. In case of fraudulent practices or misrepresentation, the university reserves the right to blacklist the bidder and cancel the contract if awarded.

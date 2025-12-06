@@ -62,6 +62,7 @@ const TenderSchema = new mongoose.Schema({
   isPreBidRequired: String,
   preBidDate: Date,
   selectedTermIds: [Number],
+  variables: Object,
   createdAt: { type: Date, default: Date.now },
 });
 const Tender = mongoose.model("Tender", TenderSchema);
@@ -93,7 +94,14 @@ app.post("/api/categories", async (req, res) => {
 });
 app.delete("/api/categories/:id", async (req, res) => {
   try {
-    await Category.findOneAndDelete({ id: req.params.id });
+    const id = parseInt(req.params.id);
+    // Check for associated terms
+    const termCount = await Term.countDocuments({ categoryId: id });
+    if (termCount > 0) {
+      return res.status(400).json({ error: "Cannot delete category with associated terms." });
+    }
+
+    await Category.findOneAndDelete({ id: id });
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -113,6 +121,32 @@ app.delete("/api/terms/:id", async (req, res) => {
   try {
     await Term.findOneAndDelete({ id: req.params.id });
     res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/api/categories/:id", async (req, res) => {
+  try {
+    const updatedCat = await Category.findOneAndUpdate(
+      { id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    res.json(updatedCat);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/api/terms/:id", async (req, res) => {
+  try {
+    const updatedTerm = await Term.findOneAndUpdate(
+      { id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    res.json(updatedTerm);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
