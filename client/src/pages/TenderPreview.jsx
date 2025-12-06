@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
 import { Printer, Edit, Check, Plus, Save } from 'lucide-react';
 import RichTextEditor from '../components/RichTextEditor';
 import { paginateContent } from '../utils/pagination';
+import { fetchTender, fetchDashboardData, fetchSavedDocument, saveDocument } from '../services/api';
 
 // Reusable Layout Component for the Triple Border & Pagination
 const PageLayout = ({ children, pageNumber, totalPages, contentId, savedHtml, isEditable, onContentChange }) => (
@@ -65,14 +65,13 @@ const TenderPreview = () => {
     // State to preserve edits when re-rendering
     const [savedContent, setSavedContent] = useState({});
 
-    // NEW: Single string for all terms content (for continuous editing)
+    // State for paginated terms content
     const [termsHtml, setTermsHtml] = useState("");
+    const [paginatedTerms, setPaginatedTerms] = useState([]);
 
     // Save Modal State
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
-
-    const [paginatedTerms, setPaginatedTerms] = useState([]);
 
     // Helper to group terms by category
     const getTermsByCategory = () => {
@@ -98,14 +97,13 @@ const TenderPreview = () => {
             console.log(`Fetching data for ID: ${id}`);
             try {
                 // 1. Fetch original tender data
-                const response = await axios.get(`http://localhost:5000/api/tenders/${id}`, { timeout: 5000 });
-                console.log("Data fetched successfully:", response.data);
-                const tender = response.data;
+                const tender = await fetchTender(id);
+                console.log("Data fetched successfully:", tender);
 
                 // 2. Fetch Terms and Categories
-                const dashboardResponse = await axios.get(`http://localhost:5000/api/dashboard-data`);
-                const allTerms = dashboardResponse.data.terms || [];
-                const allCategories = dashboardResponse.data.categories || [];
+                const dashboardData = await fetchDashboardData();
+                const allTerms = dashboardData.terms || [];
+                const allCategories = dashboardData.categories || [];
 
                 // Filter selected terms
                 const selectedTermIds = tender.selectedTermIds || [];
@@ -130,8 +128,7 @@ const TenderPreview = () => {
                 // 3. If savedId exists, fetch the saved document state
                 if (savedId) {
                     console.log(`Fetching saved document: ${savedId}`);
-                    const savedDocResponse = await axios.get(`http://localhost:5000/api/documents/${savedId}`);
-                    const savedDoc = savedDocResponse.data;
+                    const savedDoc = await fetchSavedDocument(savedId);
 
                     if (savedDoc) {
                         setSavedContent(savedDoc.pages || {});
@@ -153,7 +150,7 @@ const TenderPreview = () => {
                 setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
-                const errorMsg = err.response?.data?.error || err.message || "Unknown error";
+                const errorMsg = err.message || "Unknown error";
                 setError(`Failed to load data: ${errorMsg}`);
                 setLoading(false);
             }
@@ -231,15 +228,9 @@ const TenderPreview = () => {
     const toggleEditMode = () => {
         if (!isEditable) {
             // Entering Edit Mode
-            // We need to ensure termsHtml is up to date. 
-            // If we were just viewing, termsHtml is already the source of truth.
-            // But we also need to save Page 1 & 2 current state.
+            // Save Page 1 & 2 current state.
             const current = saveCurrentContent();
             setSavedContent(prev => ({ ...prev, ...current }));
-        } else {
-            // Exiting Edit Mode
-            // termsHtml is already updated via onChange.
-            // We need to re-paginate (handled by useEffect).
         }
         setIsEditable(!isEditable);
     };
@@ -261,14 +252,7 @@ const TenderPreview = () => {
                 ...prev,
                 [pageNum]: content
             }));
-        } else {
-            // If it's the Terms Editor (we'll pass a special ID or just handle it)
-            // Actually, for the single editor, we'll pass a specific handler.
         }
-    };
-
-    const handleTermsChange = (content) => {
-        setTermsHtml(content);
     };
 
     const handleAddPage = () => {
@@ -308,7 +292,7 @@ const TenderPreview = () => {
                 extraPages: extraPages
             };
 
-            await axios.post('http://localhost:5000/api/documents', payload);
+            await saveDocument(payload);
             setIsSaveModalOpen(false);
             alert("Document saved successfully!");
         } catch (err) {
@@ -359,7 +343,7 @@ const TenderPreview = () => {
                 </button>
             </div>
 
-            {/* Save Modal (Same as before) */}
+            {/* Save Modal */}
             {isSaveModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
                     <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
@@ -436,7 +420,6 @@ const TenderPreview = () => {
                 </div>
             ))}
 
-            {/* --- TERMS SECTION (Single Editor vs Paginated Preview) --- */}
             {/* --- TERMS SECTION (Paginated Pages) --- */}
             {paginatedTerms.map((pageContent, index) => {
                 const pageNum = 3 + index;
@@ -453,9 +436,6 @@ const TenderPreview = () => {
                                 const newTerms = [...paginatedTerms];
                                 newTerms[index] = content;
                                 setPaginatedTerms(newTerms);
-
-                                // Also update the main termsHtml to keep it somewhat in sync (optional but good for safety)
-                                // setTermsHtml(newTerms.join('')); 
                             }}
                         >
                             {/* Fallback if savedHtml is somehow empty */}
